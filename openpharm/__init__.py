@@ -4,9 +4,9 @@ __citation_information__ = (
     "PharmacoNet: Accelerating Large-Scale Virtual Screening by Deep Pharmacophore Modeling. "
     "In NeurIPS 2023 Workshop on New Frontiers of AI for Drug Discovery and Development."
 )
-__maintainer__ = "https://github.com/SeonghwanSeo/PharmacoNet"
+__maintainer__ = "Seonghwan Seo, KAIST (shwan0106@kaist.ac.kr, https://github.com/SeonghwanSeo/OpenPharm)"
 __description__ = (
     f"OpenPharm: Open-source Protein-based Pharmacophore Modeling Tool (Version {__version__}; PharmacoNet)\n"
     f'If you use OpenPharm in your work, please cite: \n"{__citation_information__}"\n'
-    f"Created and maintained by Seonghwan Seo, KAIST ({__maintainer__})\n"
+    f"Created and maintained by {__maintainer__}\n"
 )

@@ -58,6 +58,8 @@ class OpenPharmWidget(QtWidgets.QWidget):
         MODULE_PATH = Path(openpharm.__file__).parent
         weight_path = MODULE_PATH / 'weight' / 'model.tar'
         if not weight_path.exists():
+            WEIGHT_DIR = MODULE_PATH / 'weight'
+            WEIGHT_DIR.mkdir()
             dialog = objects.download_dialog.DownloadDialog(self, weight_path)
             dialog.exec_()
         self.module: PharmacoNet = PharmacoNet(str(weight_path))

@@ -1,4 +1,4 @@
-name: pmnet
+name: openpharm
 channels:
   - conda-forge
   - nvidia

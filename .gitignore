@@ -3,7 +3,7 @@
 pdb/
 examples/
 result/
-images/*.ai
+images/*
 openpharm/weight/model.tar
 
 
