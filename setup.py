@@ -28,7 +28,6 @@ setup(
         'molvoxel==0.1.3',
         'rdkit>=2023.9.4',
         'gdown>=5.1.0',
-        'PyQt5',
         'biopython>=1.83',
     ],
     classifiers=[

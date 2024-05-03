@@ -2,7 +2,7 @@
 
 Open-source GUI software for **Fully-automated Protein-based Pharmacophore Modeling** for the ultra-large-scale virtual screening.
 
-<img src="openpharm/gui/images/favicon_transparent.png" alt="OpenPharm Logo" height="100">
+<img src="openpharm/gui/images/favicon_small.png" alt="OpenPharm Logo" height="100">
 
 OpenPharm is currently powered by ***PharmacoNet: Accelerating Large-Scale Virtual Screening by Deep Pharmacophore Modeling***, developed by Seonghwan Seo, KAIST.
 
