@@ -4,7 +4,7 @@ pdb/
 examples/
 result/
 images/*
-openpharm/weight/model.tar
+model.tar
 
 
 # Byte-compiled / optimized / DLL files
