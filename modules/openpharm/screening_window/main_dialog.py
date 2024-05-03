@@ -5,10 +5,11 @@ from functools import partial
 
 from PyQt5 import QtWidgets, QtCore
 
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Tuple
 
-from openpharm.pmnet import PharmacophoreModel
+from pmnet import PharmacophoreModel
 from .utils import SettingDialog, ParameterSpinBox
+from openpharm.setting import DARKMODE_STYLESHEET
 
 
 # NOTE: Parameters
@@ -30,17 +31,18 @@ DEFAULT_SETTING = {
 
 def worker(stop_event, work_queue, result_queue, pharmacophore_model, parameter):
     while not work_queue.empty() and not stop_event.is_set():
-        index, item = work_queue.get()
+        item = work_queue.get()
         try:
             score = pharmacophore_model.scoring_file(item, parameter)
         except Exception:
             score = -1
-        result_queue.put((index, score))
+        result_queue.put((item, score))
 
 
 class ScreeningDialog(QtWidgets.QDialog):
     def __init__(self, parent):
         super().__init__(parent)
+        self.setStyleSheet(DARKMODE_STYLESHEET)
         self.setAcceptDrops(True)
         self.setWindowTitle('Screening')
         self.setGeometry(300, 300, 720, 360)
@@ -50,10 +52,9 @@ class ScreeningDialog(QtWidgets.QDialog):
 
         self.library: List[Path] = []
         self.library_path: Optional[Path] = None
-        self.result: List[float] = []
+        self.result: List[Tuple[Path, float]] = []
         self.run_finished: bool = False
         self.saved: bool = False
-        earlystop: bool = False
         self.init_UI()
         self.state_initial()
 
@@ -98,6 +99,7 @@ class ScreeningDialog(QtWidgets.QDialog):
         self.cpuSlider.valueChanged[int].connect(lambda v: self.cpuSpinBox.setValue(v))
         setting_layout.addWidget(self.cpuSlider, 1, 1, 1, 2)
         self.cpuSpinBox = QtWidgets.QSpinBox(self)
+        self.cpuSpinBox.setMaximumHeight(25)
         self.cpuSpinBox.setMinimum(1)
         self.cpuSpinBox.setMaximum(MAX_CPU)
         self.cpuSpinBox.setValue(1)
@@ -139,6 +141,7 @@ class ScreeningDialog(QtWidgets.QDialog):
                                  'Halogen Atom', 'Aromatic', 'Hydrophobic']):
             label = QtWidgets.QLabel(key)
             spinbox = ParameterSpinBox(self, key, self.parameter)
+            spinbox.setMaximumHeight(20)
             spinbox.editingFinished.connect(self.focusNextChild)
             self.parameter_widget_dict[key] = spinbox
             parameter_grid_layout.addWidget(label, i + 1, 0, 1, 1)
@@ -182,7 +185,7 @@ class ScreeningDialog(QtWidgets.QDialog):
         self.libraryLabel.setPlainText(directory)
         self.library_path = Path(directory)
         self.library = list(self.library_path.rglob('*.sdf')) + list(self.library_path.rglob('*.mol2'))
-        self.result = [0] * len(self.library)
+        self.result = [None] * len(self.library)
         self.state_library_load()
 
         self.tableWidget.setRowCount(len(self.library))
@@ -190,7 +193,7 @@ class ScreeningDialog(QtWidgets.QDialog):
             if self.setting['Library Key'] == 'Name':
                 self.tableWidget.setItem(i, 0, QtWidgets.QTableWidgetItem(file.stem))
             else:
-                self.tableWidget.setItem(i, 0, QtWidgets.QTableWidgetItem(file.relative_to(self.library_path)))
+                self.tableWidget.setItem(i, 0, QtWidgets.QTableWidgetItem(str(file.relative_to(self.library_path))))
             self.tableWidget.setItem(i, 1, QtWidgets.QTableWidgetItem(''))
         self.tableLabel.setText(f'Library Size: {len(self.library)} Molecules')
         self.state_library_load()
@@ -200,8 +203,8 @@ class ScreeningDialog(QtWidgets.QDialog):
         result_queue = multiprocessing.Queue()
 
         num_items = len(self.library)
-        for index, path in enumerate(self.library):
-            work_queue.put((index, path))
+        for path in self.library:
+            work_queue.put(path)
 
         weight = {
             'Cation': self.parameter['Cation'],
@@ -231,8 +234,8 @@ class ScreeningDialog(QtWidgets.QDialog):
                 stop_event.set()
                 break
             while not result_queue.empty():
-                index, score = result_queue.get()
-                self.result[index] = score
+                key, score = result_queue.get()
+                self.result[completed] = (key, score)
                 completed += 1
                 progress_dialog.setValue(completed)
             time.sleep(0.1)
@@ -243,7 +246,12 @@ class ScreeningDialog(QtWidgets.QDialog):
         if progress_dialog.wasCanceled():
             self.state_library_load()
         else:
-            for index, score in enumerate(self.result):
+            self.result.sort(key=(lambda item: item[1]), reverse=True)
+            for index, (file, score) in enumerate(self.result):
+                if self.setting['Library Key'] == 'Name':
+                    self.tableWidget.setItem(index, 0, QtWidgets.QTableWidgetItem(file.stem))
+                else:
+                    self.tableWidget.setItem(index, 0, QtWidgets.QTableWidgetItem(str(file.relative_to(self.library_path))))
                 self.tableWidget.setItem(index, 1, QtWidgets.QTableWidgetItem(f'{score:.3f}'))
             self.state_run_finished()
 
@@ -279,7 +287,7 @@ class ScreeningDialog(QtWidgets.QDialog):
             self.saved = True
             with open(fileName, 'w') as w:
                 w.write('Key,PharmacoNetScore\n')
-                for file, score in zip(self.library, self.result):
+                for file, score in self.result:
                     if self.setting['Library Key'] == 'Name':
                         w.write(f'{file.stem},{score:.4f}\n')
                     else:

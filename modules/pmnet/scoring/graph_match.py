@@ -17,7 +17,7 @@ except:
 
 if TYPE_CHECKING:
     from .ligand import Ligand, LigandGraph, LigandNode, LigandNodeCluster
-    from openpharm.pmnet.pharmacophore_model import PharmacophoreModel, ModelNodeCluster, ModelNode
+    from pmnet.pharmacophore_model import PharmacophoreModel, ModelNodeCluster, ModelNode
     LigandClusterPair = Tuple[LigandNodeCluster, LigandNodeCluster]
     ModelClusterPair = Tuple[ModelNodeCluster, ModelNodeCluster]
 

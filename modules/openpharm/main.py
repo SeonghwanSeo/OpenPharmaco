@@ -5,32 +5,31 @@ from pathlib import Path
 from PyQt5 import QtWidgets, QtGui, QtCore
 
 import openpharm
-from openpharm.gui import actions
-from openpharm.gui import OpenPharmWidget
-from openpharm.gui.setting import DARKMODE_STYLESHEET
+from openpharm import actions
+from openpharm.openpharm_widget import OpenPharmWidget
+from openpharm.setting import DARKMODE_STYLESHEET
 
 
 class MainApp(QtWidgets.QMainWindow):
     def __init__(self, filename=None):  # noqa
         super().__init__()
-        self.IMAGE_DIR = Path(openpharm.__file__).parent / 'gui/images/'
+        self.IMAGE_DIR = Path(openpharm.__file__).parent / 'images/'
         self.setup_menu()
         self.setWindowTitle('OpenPharmGUI')
         self.setWindowIcon(QtGui.QIcon(str(self.IMAGE_DIR / 'favicon.ico')))
         self.main_widget = OpenPharmWidget(self)
         self.setCentralWidget(self.main_widget)
-        self.resize(960, 800)
+        self.main_widget.setMinimumSize(960, 720)
+        self.setMinimumSize(960, 720)
         self.main_widget.signal.stateInitial.connect(self.state_initial)
         self.main_widget.signal.stateProteinLoaded.connect(self.state_protein_loaded)
         self.main_widget.signal.stateLigandLoaded.connect(self.state_ligand_loaded)
         self.main_widget.signal.stateModelLoaded.connect(self.state_model_loaded)
         self.main_widget.signal.stateAllStop.connect(self.state_all_stop)
-
         self._filename = filename
 
     def show(self):
-        if self._filename is not None:
-            assert os.path.splitext(self._filename)[-1] == '.pm', f'Invalid filename ({self._filename}), require `.pm`'
+        super().show()
         pixmap = QtGui.QPixmap(str(self.IMAGE_DIR / 'loading_image.png'))
         pixmap = pixmap.scaled(640, 480)
         splash = QtWidgets.QSplashScreen(pixmap)
@@ -43,7 +42,6 @@ class MainApp(QtWidgets.QMainWindow):
         else:
             self.main_widget.setup()
         splash.close()
-        super().show()
 
     def setup_menu(self):
         menubar = self.menuBar()
@@ -90,7 +88,7 @@ def main():
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("OpenPharmGUI")
-    IMAGE_DIR = Path(openpharm.__file__).parent / 'gui/images/'
+    IMAGE_DIR = Path(openpharm.__file__).parent / 'images/'
     app.setWindowIcon(QtGui.QIcon(QtGui.QIcon(str(IMAGE_DIR / 'favicon.ico'))))
     app.setStyleSheet(DARKMODE_STYLESHEET)
     if len(sys.argv) > 1:
@@ -99,6 +97,10 @@ def main():
         ex = MainApp()
     ex.show()
     sys.exit(app.exec_())
+
+
+def run():
+    os.system(f'_openpharm {" ".join(sys.argv[1:])} >/dev/null')
 
 
 if __name__ == '__main__':

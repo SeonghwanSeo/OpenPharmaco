@@ -125,7 +125,7 @@ def clearSession(self):
 
 
 def modeling(self):
-    from openpharm.pmnet import PharmacophoreModel
+    from pmnet import PharmacophoreModel
     assert self.protein_path is not None
 
     ligand_path = self.treeWidget.active_ligand.filename
@@ -201,7 +201,7 @@ def setup_ligand(self, key, filename, load_pymol=True, is_active=False):
 
 
 def setup_model(self, filename):
-    from openpharm.pmnet import PharmacophoreModel
+    from pmnet import PharmacophoreModel
     self.pharmacophore_model = PharmacophoreModel.load(filename)
     self.print_log(f'Load Pharmacophore Model ({filename})')
     with tempfile.TemporaryDirectory() as direc:

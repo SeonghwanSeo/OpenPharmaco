@@ -74,6 +74,9 @@ DARKMODE_STYLESHEET = """
     QMainWindow {
         background-color: #2c2c2e;
     }
+    QDialog {
+        background-color: #2c2c2e;
+    }
     QPushButton {
         background-color: #606062;
         color: #e7e7e7;
@@ -95,12 +98,6 @@ DARKMODE_STYLESHEET = """
         color: #747475;
     }
     QLabel {
-        color: #e7e7e7;
-    }
-    QSpinBox {
-        color: #e7e7e7;
-    }
-    QDoubleSpinBox {
         color: #e7e7e7;
     }
     QPlainTextEdit {
@@ -140,4 +137,68 @@ DARKMODE_STYLESHEET = """
         border-radius: 2px;
         padding: 1px 6px;
     }
-    """
+
+    QTableWidget {
+        background-color: #1e1e1e;
+        color: #e7e7e7;
+        border: 1px solid #464647;
+    }
+    QTableWidget::item {
+        border: 1px solid #464647;
+    }
+    QTableWidget::item:selected {
+        background-color: #747475;
+        color: #fff;
+        border: 1px solid #464647;
+    }
+
+    QSpinBox, QDoubleSpinBox{
+        color: #e7e7e7;
+        background-color: #292929;
+        border: 1px solid #494949;
+        border-radius: 5px;
+    }
+    QSpinBox::up-button, QDoubleSpinBox::up-button {
+        subcontrol-origin: border;
+        subcontrol-position: top right;
+        border-left: 1px solid #78787a;
+        border-bottom: 1px solid #78787a;
+        width: 16px;
+        color: #494949;
+    }
+    QSpinBox::down-button, QDoubleSpinBox::down-button {
+        subcontrol-origin: border;
+        subcontrol-position: bottom right;
+        border-left: 1px solid #78787a;
+        border-top: 1px solid #78787a;
+        width: 16px;
+        color: #494949;
+    }
+    QSpinBox:disabled, QDoubleSpinBox:disabled{
+        background-color: #464647;
+        color: #747475;
+    }
+    QSlider {
+        height: 20px;
+        min-height: 20px;
+        max-height: 20px;
+    }
+    QSlider::groove:horizontal {
+        border: 1px solid #494949;
+        height: 4px;
+        background: transparent;
+        margin: 2px 0;
+        border-radius: 4px;
+    }
+    QSlider::handle:horizontal {
+        background: #78787a;
+        border: 3px solid #78787a;
+        height: 12px;
+        width: 4px;
+        margin: -6px 0; 
+        border-radius: 8px;
+    }
+    QRadioButton {
+        color: #e7e7e7;
+    }
+"""

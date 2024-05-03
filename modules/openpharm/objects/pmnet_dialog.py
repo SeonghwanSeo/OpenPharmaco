@@ -1,6 +1,6 @@
 import json
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import QThread, pyqtSignal
 
 
@@ -55,6 +55,12 @@ class PMProgressDialog(QtWidgets.QDialog):
         rect = self.geometry()
         rect.moveCenter(parent_center)
         self.move(rect.topLeft())
+
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Escape:
+            event.ignore()  # Ignore the ESC key press
+        else:
+            super().keyPressEvent(event)  # Handle other key events normally
 
     def closeEvent(self, event):
         self.worker.stop()

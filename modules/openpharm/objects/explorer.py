@@ -4,7 +4,7 @@ import pymol
 
 from typing import Dict, Optional
 
-from openpharm.gui import SETTING
+from openpharm import setting as SETTING
 
 
 class ViewerQTreeWidget(QtWidgets.QTreeWidget):
