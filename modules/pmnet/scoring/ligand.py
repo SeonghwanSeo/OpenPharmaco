@@ -79,24 +79,6 @@ class Ligand():
             atom_positions.append([atom.coords for atom in pbmol.atoms])
         return cls(base_pbmol, atom_positions, _unsafe=True)
 
-    @classmethod
-    def load_from_smiles(cls, smiles: str, num_conformers: int) -> Ligand:
-        from rdkit import Chem
-        from rdkit.Chem import rdDistGeom
-        fn = tempfile.NamedTemporaryFile(suffix='.sdf').name
-        try:
-            rdmol: Chem.rdchem.Mol = Chem.MolFromSmiles(smiles)
-            rdmol = Chem.AddHs(rdmol)
-            rdDistGeom.EmbedMultipleConfs(rdmol, num_conformers, param=rdDistGeom.srETKDGv3())
-            with Chem.SDWriter(fn) as w:
-                w.write(rdmol)
-            out = cls.load_from_file(fn)
-            os.unlink(fn)
-        except Exception as e:
-            os.unlink(fn)
-            raise e
-        return out
-
 
 class LigandGraph():
     def __init__(self, ligand_obj: Ligand):

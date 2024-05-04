@@ -17,7 +17,7 @@ setup(
     packages=find_packages(where='modules'),
     package_dir={'': 'modules'},
     package_data={
-        'openpharm': ['images/favicon.ico', 'images/loading_image.png']
+        'openpharm': ['images/favicon.ico', 'images/loading_image.png', 'images/down_arrow.png', 'images/right_arrow.png']
     },
     install_requires=[
         'torch==1.13.1',

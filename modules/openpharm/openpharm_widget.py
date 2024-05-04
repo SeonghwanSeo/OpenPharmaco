@@ -69,9 +69,9 @@ class OpenPharmWidget(QtWidgets.QWidget):
         self.logOutput.appendPlainText(openpharm.__description__)
 
         end = time.time()
-        if (end - st) < 1:
-            time.sleep(1 - (end - st))
-        self.print_log('Start OpenPharm GUI (built using PyMOL(TM) by Schrodinger, LLC.)')
+        if (end - st) < 1.5:
+            time.sleep(1.5 - (end - st))
+        self.print_log('Start OpenPharm GUI')
 
     def init_pymol(self):
         options = pymol.invocation.options

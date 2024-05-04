@@ -1,4 +1,34 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
+from pathlib import Path
+
+
+class EmptyQTableWidgetItem(QtWidgets.QTableWidgetItem):
+    def __init__(self):
+        super().__init__(' ')
+
+
+class FileQTableWidgetItem(QtWidgets.QTableWidgetItem):
+    def __init__(self, file: Path, library_dir: Path, use_path: bool, **kwargs):
+        self.file: Path = file
+        self.filename: str = file.stem
+        self.filepath: str = str(file.relative_to(library_dir))
+        if use_path:
+            super().__init__(self.filepath, **kwargs)
+        else:
+            super().__init__(self.filename, **kwargs)
+        self.setFlags(self.flags() & ~QtCore.Qt.ItemIsEditable)
+
+    def to_filename(self):
+        self.setText(self.filename)
+
+    def to_filepath(self):
+        self.setText(self.filepath)
+
+
+class ScoreQTableWidgetItem(QtWidgets.QTableWidgetItem):
+    def __init__(self, score: float, **kwargs):
+        super().__init__(f'{score:.3f}', **kwargs)
+        self.setFlags(self.flags() & ~QtCore.Qt.ItemIsEditable)
 
 
 class SettingDialog(QtWidgets.QDialog):

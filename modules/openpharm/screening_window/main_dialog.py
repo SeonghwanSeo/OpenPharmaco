@@ -8,7 +8,8 @@ from PyQt5 import QtWidgets, QtCore
 from typing import List, Optional, Dict, Tuple
 
 from pmnet import PharmacophoreModel
-from .utils import SettingDialog, ParameterSpinBox
+from .utils import SettingDialog, ParameterSpinBox, FileQTableWidgetItem, ScoreQTableWidgetItem, EmptyQTableWidgetItem
+
 from openpharm.setting import DARKMODE_STYLESHEET
 
 
@@ -185,17 +186,15 @@ class ScreeningDialog(QtWidgets.QDialog):
         self.libraryLabel.setPlainText(directory)
         self.library_path = Path(directory)
         self.library = list(self.library_path.rglob('*.sdf')) + list(self.library_path.rglob('*.mol2'))
-        self.result = [None] * len(self.library)
         self.state_library_load()
 
         self.tableWidget.setRowCount(len(self.library))
         for i, file in enumerate(self.library):
-            if self.setting['Library Key'] == 'Name':
-                self.tableWidget.setItem(i, 0, QtWidgets.QTableWidgetItem(file.stem))
-            else:
-                self.tableWidget.setItem(i, 0, QtWidgets.QTableWidgetItem(str(file.relative_to(self.library_path))))
-            self.tableWidget.setItem(i, 1, QtWidgets.QTableWidgetItem(''))
+            item = FileQTableWidgetItem(file, self.library_path, self.setting['Library Key'] == 'Path')
+            self.tableWidget.setItem(i, 0, item)
+            self.tableWidget.setItem(i, 1, EmptyQTableWidgetItem())
         self.tableLabel.setText(f'Library Size: {len(self.library)} Molecules')
+        self.result = [None] * len(self.library)
         self.state_library_load()
 
     def action_run(self):
@@ -248,11 +247,9 @@ class ScreeningDialog(QtWidgets.QDialog):
         else:
             self.result.sort(key=(lambda item: item[1]), reverse=True)
             for index, (file, score) in enumerate(self.result):
-                if self.setting['Library Key'] == 'Name':
-                    self.tableWidget.setItem(index, 0, QtWidgets.QTableWidgetItem(file.stem))
-                else:
-                    self.tableWidget.setItem(index, 0, QtWidgets.QTableWidgetItem(str(file.relative_to(self.library_path))))
-                self.tableWidget.setItem(index, 1, QtWidgets.QTableWidgetItem(f'{score:.3f}'))
+                item = FileQTableWidgetItem(file, self.library_path, self.setting['Library Key'] == 'Path')
+                self.tableWidget.setItem(index, 0, item)
+                self.tableWidget.setItem(index, 1, ScoreQTableWidgetItem(score))
             self.state_run_finished()
 
     def action_clear(self):
@@ -269,8 +266,8 @@ class ScreeningDialog(QtWidgets.QDialog):
             if reply == QtWidgets.QMessageBox.Save:
                 self.action_save()
         for i, _ in enumerate(self.library):
-            self.tableWidget.setItem(i, 1, QtWidgets.QTableWidgetItem(''))
-        self.result = [0] * len(self.library)
+            self.tableWidget.setItem(i, 1, EmptyQTableWidgetItem())
+        self.result = [None] * len(self.result)
         self.state_library_load()
 
     def action_save(self):
@@ -300,12 +297,12 @@ class ScreeningDialog(QtWidgets.QDialog):
         # NOTE: Library Key
         if self.library_path is not None:
             if initial_setting['Library Key'] != self.setting['Library Key']:
-                if self.setting['Library Key'] == 'Name':
-                    for i, file in enumerate(self.library):
-                        self.tableWidget.setItem(i, 0, QtWidgets.QTableWidgetItem(file.stem))
-                else:
-                    for i, file in enumerate(self.library):
-                        self.tableWidget.setItem(i, 0, QtWidgets.QTableWidgetItem(str(file.relative_to(self.library_path))))
+                for index in range(len(self.library)):
+                    item = self.tableWidget.item(index, 0)
+                    if self.setting['Library Key'] == 'Name':
+                        item.to_filename()
+                    else:
+                        item.to_filepath()
 
     def action_set_parameter(self, value, key):
         self.parameter[key] = value

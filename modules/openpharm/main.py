@@ -7,16 +7,15 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 import openpharm
 from openpharm import actions
 from openpharm.openpharm_widget import OpenPharmWidget
-from openpharm.setting import DARKMODE_STYLESHEET
+from openpharm.setting import DARKMODE_STYLESHEET, IMAGE_DIR
 
 
 class MainApp(QtWidgets.QMainWindow):
     def __init__(self, filename=None):  # noqa
         super().__init__()
-        self.IMAGE_DIR = Path(openpharm.__file__).parent / 'images/'
         self.setup_menu()
         self.setWindowTitle('OpenPharmGUI')
-        self.setWindowIcon(QtGui.QIcon(str(self.IMAGE_DIR / 'favicon.ico')))
+        self.setWindowIcon(QtGui.QIcon(str(IMAGE_DIR / 'favicon.ico')))
         self.main_widget = OpenPharmWidget(self)
         self.setCentralWidget(self.main_widget)
         self.main_widget.setMinimumSize(960, 720)
@@ -30,7 +29,7 @@ class MainApp(QtWidgets.QMainWindow):
 
     def show(self):
         super().show()
-        pixmap = QtGui.QPixmap(str(self.IMAGE_DIR / 'loading_image.png'))
+        pixmap = QtGui.QPixmap(str(IMAGE_DIR / 'loading_image.png'))
         pixmap = pixmap.scaled(640, 480)
         splash = QtWidgets.QSplashScreen(pixmap)
         rect = splash.geometry()
@@ -84,11 +83,10 @@ class MainApp(QtWidgets.QMainWindow):
 
 
 def main():
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("OpenPharmGUI")
-    IMAGE_DIR = Path(openpharm.__file__).parent / 'images/'
     app.setWindowIcon(QtGui.QIcon(QtGui.QIcon(str(IMAGE_DIR / 'favicon.ico'))))
     app.setStyleSheet(DARKMODE_STYLESHEET)
     if len(sys.argv) > 1:
