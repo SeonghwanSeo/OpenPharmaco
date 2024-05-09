@@ -1,6 +1,6 @@
 # OpenPharm: Open-source Protein-based Pharmacophore Modeling
 
- <img src="images/favicon.png" alt="OpenPharm Logo" height="160">
+ <img src="Documents/images/logo.png" alt="OpenPharm Logo" height="160">
 
 Open-source GUI software for **Fully-automated Protein-based Pharmacophore Modeling** for the ultra-large-scale virtual screening.
 
@@ -10,7 +10,7 @@ If you are terminal user or developer (ex. Deep Learning developer), please visi
 
 If you have any problems or need help, please add an github issue.
 
-Document (ENG, [KOR](Documents/Document-KOR.md))
+You can get more information at [Wiki](https://github.com/SeonghwanSeo/OpenPharm/wiki).
 
 
 

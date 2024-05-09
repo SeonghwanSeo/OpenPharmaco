@@ -4,19 +4,23 @@
 
 OpenPharm은 딥러닝을 통해 완전히 자동화된 단백질 기반 파마코포어 모델링 및 초고속 가상 스크리닝을 수행하는 PharmacoNet의 그래픽 사용자 인터페이스를 지원합니다.
 
-본 매뉴얼은 MacOS에서 수행되었으며, 윈도우 환경도 추후 지원 예정입니다.
+본 매뉴얼은 MacOS에서 수행되었습니다.
 
 개발 및 유지보수: 서성환 (카이스트 화학과 김우연 교수 연구실)
 
-소스 코드: https://github.com/SeonghwanSeo/OpenPharm
+OpenPharm을 사용하실 경우, 논문을 인용해주세요:
 
 > Seo, S., & Kim, W. Y. (2023, December). PharmacoNet: Accelerating Large-Scale Virtual Screening by Deep Pharmacophore Modeling. In NeurIPS 2023 Workshop on New Frontiers of AI for Drug Discovery and Development.
 
+논문: https://arxiv.org/abs/2310.00681
+
+소스 코드: https://github.com/SeonghwanSeo/OpenPharm
 
 
-## 시작
 
-### 설치
+## 1. 시작
+
+### 1-1. 설치
 
 Github으로부터 소스코드를 다운받은 뒤, Anaconda 가상환경을 통해 필요한 라이브러리를 설치합니다.
 
@@ -31,7 +35,7 @@ conda activate openpharm
 python setup.py install
 ```
 
-### 실행
+### 1-2. 실행
 
 이제 아래와 같이 openpharm 명령어를 통해 OpenPharm을 실행시킬 수 있습니다.
 
@@ -40,7 +44,7 @@ conda activate openpharm  # (re-activate to load alias)
 openpharm
 ```
 
-`openpharm` 명령어를 이용해 OpenPharm을 처음으로 실행시키면 초기 세팅 과정이 수행되며, 필요한 파일들을 다운받습니다. (139 MB)
+OpenPharm을 처음으로 실행시키면 초기 세팅 과정이 수행되며, 필요한 파일들을 다운받습니다. (139 MB)
 
 <img src="images/googledrive_download.png" alt="image-20240503184859239" style="zoom:33%;" />
 
@@ -48,9 +52,9 @@ openpharm
 
 
 
-## 단백질-기반 파마코포어 모델링 (Protein-based Pharmacophore Modeling)
+## 2. 단백질-기반 파마코포어 모델링 (Protein-based Pharmacophore Modeling)
 
-### 단백질 및 결합 부위 지정하기
+### 2-1. 단백질 및 결합 부위 지정하기
 
 OpenPharm은 RCSB로부터 단백질 파일을 다운받고, 자동으로 파싱하여 결합부위를 인식합니다.
 
@@ -62,7 +66,7 @@ Protein 옆의 화살표를 눌러 chain, stick, line 등 단백질 구조를 �
 
 <img src="images/rcsb_load.png" style="zoom:33%;" />
 
-### 파마코포어 모델링
+### 2-2. 파마코포어 모델링
 
 왼쪽 테이블에서 원하는 결합 부위 리간드를 선택하고, `Modeling` 버튼을 눌러 단백질 기반 파마코포어 모델링을 수행합니다.
 
@@ -72,7 +76,7 @@ Protein 옆의 화살표를 눌러 chain, stick, line 등 단백질 구조를 �
 
 <img src="images/model.png" style="zoom:33%;" />
 
-### 파마코포어 모델 불러오기
+### 2-3. 파마코포어 모델 불러오기
 
 저장된 파마코포어 모델은 `Open Model File`을 누르거나 파일을 프로그램 창으로 드래그앤드롭하여 로드할 수 있습니다.
 
@@ -80,7 +84,7 @@ Protein 옆의 화살표를 눌러 chain, stick, line 등 단백질 구조를 �
 
 
 
-### 세션 초기화
+### 2-4. 세션 초기화
 
 단백질 또는 파마코포어 모델을 닫고 새로운 작업을 하기 위해 `Clear` 버튼을 눌러 세션을 초기화합니다.
 
@@ -88,13 +92,13 @@ Protein 옆의 화살표를 눌러 chain, stick, line 등 단백질 구조를 �
 
 
 
-## 초고속 가상스크리닝
+## 3. 초고속 가상스크리닝
 
 파마코포어 모델이 열려있는 상태에서 `Screening` 버튼을 눌러 스크리닝을 수행할 수 있습니다.
 
 <img src="images/screening_window.png" style="zoom:33%;" />
 
-### 화합물 라이브러리 열기
+### 3-1. 화합물 라이브러리 열기
 
 `Library` 버튼을 눌러 폴더를 선택하거나 혹은 스크리닝 창으로 드래그앤드롭하면, 폴더 및 하위 폴더 내에 있는 모든 `sdf` 및 `mol2` 파일이 로드됩니다. (각 화합물 파일에는 1개 이상의 컨포머가 포함될 수 있습니다.)
 
@@ -125,7 +129,7 @@ Protein 옆의 화살표를 눌러 chain, stick, line 등 단백질 구조를 �
 
 <img src="images/screening_library_load_filepath.png" style="zoom:33%;" />
 
-### 가중치 설정하기
+### 3-2. 가중치 설정하기
 
 OpenPharm의 내장 프로그램인 PharmacoNet은 7개의 약리학적 특성에 할당되는 파라미터를 통해 스크리닝을 수행하며, OpenPharm을 통해 각 약리학적 특성에 대한 가중치를 변경할 수 있습니다.
 
@@ -135,7 +139,7 @@ OpenPharm의 내장 프로그램인 PharmacoNet은 7개의 약리학적 특성�
 
 <img src="images/screening_parameter.png" style="zoom:33%;" />
 
-### 가상 스크리닝 수행하기
+### 3-3. 가상 스크리닝 수행하기
 
 모든 설정이 끝났으면, 사용할 CPU 코어의 개수를 `CPUs` 옆의 슬라이드 바 혹은 숫자를 변경하여 설정합니다.
 
@@ -147,7 +151,7 @@ OpenPharm은 시스템에 있는 CPU를 자동으로 인식하여 최대값을 �
 
 <img src="images/screening_result.png" style="zoom:33%;" />
 
-### 결과 저장하기
+### 3-4. 결과 저장하기
 
 `Save` 버튼을 누르면 스크리닝 결과가 저장됩니다.
 
@@ -155,19 +159,29 @@ OpenPharm은 시스템에 있는 CPU를 자동으로 인식하여 최대값을 �
 
 
 
-### 초기화하기
+### 3-5. 초기화하기
 
 다른 라이브러리 혹은 세팅값으로 스크리닝을 수행하고 싶은 경우, `Clear` 버튼을 눌러 세션을 초기화합니다.
 
 
 
-## 개발 지원
+## 4. 개발
 
 OpenPharm은 PyTorch, NumPy, Numba, BioPython, OpenBabel, Open-Source PyMol, PyQt5을 활용하여 개발되었습니다.
 
 
 
-## 저작권
+## 5. 인용
+
+논문: https://arxiv.org/abs/2310.00681
+
+OpenPharm을 사용하실 경우, 아래 논문을 인용해주세요:
+
+> Seo, S., & Kim, W. Y. (2023, December). PharmacoNet: Accelerating Large-Scale Virtual Screening by Deep Pharmacophore Modeling. In NeurIPS 2023 Workshop on New Frontiers of AI for Drug Discovery and Development.
+
+
+
+## 6. 저작권
 
 ```
 MIT License

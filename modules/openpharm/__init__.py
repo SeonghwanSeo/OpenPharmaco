@@ -6,7 +6,7 @@ __citation_information__ = (
 )
 __maintainer__ = "Seonghwan Seo, KAIST (https://github.com/SeonghwanSeo/OpenPharm)"
 __description__ = (
-    f"OpenPharm: Open-source Protein-based Pharmacophore Modeling Tool (Version {__version__}; PharmacoNet)\n"
+    f"OpenPharm: Open-source Protein-based Pharmacophore Modeling Tool (Version {__version__}; powere by PharmacoNet)\n"
     f'If you use OpenPharm in your work, please cite: "{__citation_information__}"\n'
     f"Created and maintained by {__maintainer__}\n"
 )
