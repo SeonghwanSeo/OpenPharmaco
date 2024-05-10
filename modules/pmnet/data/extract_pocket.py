@@ -53,5 +53,5 @@ def extract_pocket(
     io = PDBIO()
     io.set_structure(structure)
     io.save(out_pocket_pdb_path, DistSelect(center, cutoff))
-    command = f"obabel {out_pocket_pdb_path} -O {out_pocket_pdb_path} -d 2>/dev/null"
+    command = f"obabel {out_pocket_pdb_path} -O {out_pocket_pdb_path} -d"
     os.system(command)

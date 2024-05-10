@@ -12,9 +12,11 @@ from .screening_window import ScreeningDialog
 
 
 def exportPyMOL(self):
-    with tempfile.NamedTemporaryFile(suffix='.pse') as fd:
-        pymol.cmd.save(fd.name)
-        os.system(f'pymol {fd.name}')
+    with tempfile.NamedTemporaryFile(suffix='.pse', delete=False) as fd:
+        pass
+    pymol.cmd.save(fd.name)
+    os.system(f'pymol {fd.name}')
+    os.remove(fd.name)
 
 
 def savePyMOLSession(self):

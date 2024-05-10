@@ -3,6 +3,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 import time
 import gdown
 import os
+import shutil
 
 
 class DownloadWorker(QThread):
@@ -17,17 +18,16 @@ class DownloadWorker(QThread):
 class ProgressWorker(QThread):
     progress = pyqtSignal(int)
 
-    def __init__(self, weight_dir):
+    def __init__(self, weight_path):
         super().__init__()
-        self.weight_dir = weight_dir
+        self.weight_dir = weight_path.parent
 
     def run(self):
         while True:
-            size = list(os.popen(f'du -sh {self.weight_dir.parent}'))[0].split()[0]
-            if not size.endswith('M'):
-                size = 0
-            else:
-                size = float(size[:-1])
+            size = 0
+            for file in self.weight_dir.iterdir():
+                size += os.path.getsize(file)
+            size = int(size / (1024 ** 2))
             self.progress.emit(min(int(size / 130 * 100), 100))
             if size > 130:
                 break
@@ -51,11 +51,11 @@ class DownloadDialog(QtWidgets.QDialog):
         self.setLayout(layout)
         self.center_on_parent()
 
-        weight_dir = weight_path.parent
-        os.system(f'/bin/rm -rf {weight_dir}')
-        weight_dir.mkdir()
+        weight_path.parent.mkdir(exist_ok=True)
+        for file in weight_path.parent.iterdir():
+            os.remove(file)
         self.worker = worker = DownloadWorker(str(weight_path))
-        self.progressworker = progressworker = ProgressWorker(weight_dir)
+        self.progressworker = progressworker = ProgressWorker(weight_path)
         worker.finished.connect(self.close)
         progressworker.progress.connect(self.progressBar.setValue)
         progressworker.start()

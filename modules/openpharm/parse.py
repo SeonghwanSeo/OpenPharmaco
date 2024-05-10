@@ -35,7 +35,11 @@ def parse_pdb(pdb_code: str, protein_path: PathLike[str], save_pdb_dir: PathLike
             ligid, authchain, residue_idx, _ = vs
         else:
             ligid, authchain, residue_idx, = vs[0], vs[1][0], vs[1][1:]
-        pdbchain = chr(ord(last_chain) + idx + 1)
+        if last_chain.startswith('Z'):
+            pdbchain = f'Z_{idx}'
+        else:
+            pdbchain = chr(ord(last_chain) + 1)
+        last_chain = pdbchain
         ligand_key = f"{pdb_code}_{pdbchain}_{ligid}"
         pymol.cmd.extract(ligand_key, f"resn {ligid} and resi {residue_idx} and chain {authchain}")
         ligand_path = str(Path(save_pdb_dir) / f'{ligand_key}.sdf')
