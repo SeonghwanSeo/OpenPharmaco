@@ -28,7 +28,6 @@ class MainApp(QtWidgets.QMainWindow):
         self._filename = filename
 
     def show(self):
-        super().show()
         pixmap = QtGui.QPixmap(str(IMAGE_DIR / 'loading_image.png'))
         pixmap = pixmap.scaled(640, 480)
         splash = QtWidgets.QSplashScreen(pixmap)
@@ -41,6 +40,7 @@ class MainApp(QtWidgets.QMainWindow):
         else:
             self.main_widget.setup()
         splash.close()
+        super().show()
 
     def setup_menu(self):
         menubar = self.menuBar()
@@ -98,7 +98,11 @@ def main():
 
 
 def run():
-    os.system(f'_openpharm {" ".join(sys.argv[1:])} >/dev/null')
+    if os.name == 'nt':
+        os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+        os.system(f'_openpharm {" ".join(sys.argv[1:])} > NUL')
+    else:
+        os.system(f'_openpharm {" ".join(sys.argv[1:])} > /dev/null')
 
 
 if __name__ == '__main__':

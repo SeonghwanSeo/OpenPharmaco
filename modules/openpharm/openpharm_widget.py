@@ -58,7 +58,7 @@ class OpenPharmWidget(QtWidgets.QWidget):
         from pmnet import PharmacophoreModel
         from pmnet.module import PharmacoNet
 
-        MODULE_PATH = Path(openpharm.__file__).parent
+        MODULE_PATH = Path(openpharm.__file__).parent.parent
         weight_path = MODULE_PATH / 'weight' / 'model.tar'
         if not weight_path.exists():
             dialog = objects.download_dialog.DownloadDialog(self, weight_path)

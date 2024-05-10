@@ -118,10 +118,12 @@ DARKMODE_STYLESHEET = f"""
         color: #e7e7e7;
     }}
     QTreeWidget::branch:open:has-children {{
-        image: url({IMAGE_DIR}/down_arrow.png);
+        background-color: #2c2c2e;
+        image: url({IMAGE_DIR / 'down_arrow.png'});
     }}
     QTreeWidget::branch:closed:has-children {{
-        image: url({IMAGE_DIR}/right_arrow.png);
+        background-color: #2c2c2e;
+        image: url({IMAGE_DIR / 'right_arrow.png'});
     }}
     QLineEdit {{
         background-color: #1e1e1e;
@@ -186,12 +188,12 @@ DARKMODE_STYLESHEET = f"""
         width: 12px;
     }}
     QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {{
-        image: url({IMAGE_DIR}/up_arrow_spinbox.png);
+        image: url({IMAGE_DIR / 'up_arrow_spinbox.png'});
         width: 6px;
         color: e7e7e7;
     }}
     QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {{
-        image: url({IMAGE_DIR}/down_arrow_spinbox.png);
+        image: url({IMAGE_DIR / 'down_arrow_spinbox.png'});
         width: 6px;
         color: e7e7e7;
     }}
