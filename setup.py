@@ -27,7 +27,6 @@ setup(
         'numba>=0.59',
         'omegaconf>=2.3.0',
         'molvoxel==0.1.3',
-        'rdkit>=2023.9.4',
         'gdown>=5.1.0',
         'biopython>=1.83',
     ],
