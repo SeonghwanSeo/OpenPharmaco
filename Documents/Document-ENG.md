@@ -43,11 +43,11 @@ openpharm
 
 The first time user run OpenPharm, it goes through an initial setup process and downloads the necessary files. (139 MB)
 
-<img src="images/googledrive_download.png" alt="image-20240503184859239" style="zoom:33%;" />
+<img src="images/1_gdrivedownload.png" alt="Google Drive Download" style="zoom:33%;" />
 
 Once all downloads have finished, subsequent runs will take about seconds of loading time.
 
-
+<img src="images/2_init.png" alt="Initial Screen" style="zoom:33%;" />
 
 ## 2. Protein-based Pharmacophore Modeling
 
@@ -61,31 +61,31 @@ If user wants to use a custom protein file, manually enter the protein file (`.p
 
 Tap the button (▸) left to `Protein` in the explorer to visualize the structure, including chains, sticks, and lines.
 
-<img src="images/rcsb_load.png" style="zoom:33%;" />
+<img src="images/3_protein.png" alt="6OIM structure" style="zoom:33%;" />
 
 ### 2-2. Pharmacophore modeling
 
 Select the desired binding site ligand from explorer, and click the `Modeling` to perform protein-based pharmacophore modeling.
 
+<img src="images/4_modeling.png" alt="Pharmacophore Modeling" style="zoom:33%;" />
+
+<img src="images/5_model.png"  alt="Pharmacophore Model" style="zoom:33%;" />
+
+### 2-3. Saving a pharmacophore model (Ctrl-S/Cmd-S)
+
 The calculated pharmacopore model can be saved by clicking `Save Model File` (`.pm` extension)
 
-<img src="images/modeling.png" style="zoom:33%;" />
+### 2-4. Importing a pharmacopore model (Ctrl-O/Cmd-O)
 
-<img src="images/model.png" style="zoom:33%;" />
+User can load the saved pharmacopore models by clicking `Open Model File`, or drag and drop the file into the program window.
 
-### 2-3. Importing a pharmacopore model
+Before clicking `Open Model File` or shortcut, user needs to initialize the session by `Clear`.
 
-User can load the saved pharmacopore models by clicking `Open Model File` or by drag and drop the file into the program window.
+### 2-5. Initializing a session (Ctrl-W/Cmd-W)
 
-Before clicking `Open Model File`, user needs to initialize the session by `Clear`.
+To reset the protein or pharmacophore model, click `Clear` or press `Ctrl-W/Cmd-W`.
 
-
-
-### 2-4. Initializing a session
-
-To reset the protein or pharmacophore model, click `Clear`.
-
-<img src="images/model_clear.png" style="zoom:33%;" />
+<img src="images/6_clear.png"  alt="Clear" style="zoom:33%;" />
 
 
 
@@ -93,7 +93,7 @@ To reset the protein or pharmacophore model, click `Clear`.
 
 With the pharmacopore model open, user can perform virtual screening by clicking the `Screening`.
 
-<img src="images/screening_window.png" style="zoom:33%;" />
+<img src="images/7_screening_window.png" alt="Screening Window" style="zoom:33%;" />
 
 
 
@@ -121,7 +121,7 @@ For example, if user select the `library/` folder below, the files `a.mol2`, `b.
 Below is a screenshot when opening an example library of 1,000 compounds containing 8 conformers.
 (Example library: https://drive.google.com/file/d/1XCMv97WpfgEccR4xXTGep_PCMMJq3f7t/view?usp=share_link)
 
-<img src="images/screening_library_load.png" style="zoom:33%;" />
+<img src="images/8_screening_open_library.png" alt="Load Library" style="zoom:33%;" />
 
 User can change the file parsing rule by clicking `Advanced` and choose between `File Name` or `File Path.` (Default: `File Name.`)
 
@@ -129,7 +129,7 @@ For example, `d.sdf` and `d.mol2` above are indistinguishable because they have 
 
 Below is the screenshot when `File Path` is selected.
 
-<img src="images/screening_library_load_filepath.png" style="zoom:33%;" />
+<img src="images/9_screening_open_library_path.png" alt="Load Library Path" style="zoom:33%;" />
 
 
 
@@ -142,7 +142,7 @@ User can change the value under `Parameter Setting` via mouse or keyboard, and i
 
 Clicking `Reset All` resets the parameters to the default setting.
 
-<img src="images/screening_parameter.png" style="zoom:33%;" />
+<img src="images/10_screening_change_parameter.png" alt="Change Parameter" style="zoom:33%;" />
 
 
 
@@ -154,9 +154,9 @@ OpenPharm automatically recognizes the maximum number of CPUs in system.
 Finally, click `Run` to start virtual screening.
 After screening, the molecules with the highest scores are listed first.
 
-<img src="images/screening_run.png" style="zoom:33%;" />
+<img src="images/11_screening_running.png" alt="Screening" style="zoom:33%;" />
 
-<img src="images/screening_result.png" style="zoom:33%;" />
+<img src="images/12_screening_result.png" alt="Result" style="zoom:33%;" />
 
 
 

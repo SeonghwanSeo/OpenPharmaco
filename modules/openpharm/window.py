@@ -1,4 +1,5 @@
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtGui, QtCore
+import time
 
 import openpharm
 from openpharm import actions
@@ -25,8 +26,9 @@ class OpenPharmWindow(QtWidgets.QMainWindow):
         self.setStyleSheet(DARKMODE_STYLESHEET)
 
     def show(self):
-        pixmap = QtGui.QPixmap(str(IMAGE_DIR / 'loading_image.png'))
-        pixmap = pixmap.scaled(640, 480)
+        image = QtGui.QImage(str(IMAGE_DIR / 'loading_image.png'))
+        image = image.scaled(640, 480, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+        pixmap = QtGui.QPixmap.fromImage(image)
         splash = QtWidgets.QSplashScreen(pixmap)
         rect = splash.geometry()
         rect.moveCenter(self.geometry().center())

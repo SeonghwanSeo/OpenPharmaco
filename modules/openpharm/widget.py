@@ -4,7 +4,7 @@ from collections import OrderedDict
 from datetime import datetime
 import os
 
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal, QObject
 
 import pymol
@@ -12,6 +12,7 @@ from pmg_qt.pymol_gl_widget import PyMOLGLWidget
 from pmg_qt.pymol_qt_gui import PyMOLGLWidget
 
 from . import actions, objects
+from .setting import IMAGE_DIR
 
 from typing import Optional
 
@@ -53,7 +54,6 @@ class OpenPharmWidget(QtWidgets.QWidget):
 
     def _setup_pmnet(self):
         # NOTE: Load PharmacoNet
-        st = time.time()
         import openpharm
         from pmnet import PharmacophoreModel
         from pmnet.module import PharmacoNet
@@ -67,10 +67,6 @@ class OpenPharmWidget(QtWidgets.QWidget):
         self.pharmacophore_model: Optional[PharmacophoreModel] = None
         self.pharmacophore_model_name: Optional[str] = None
         self.logOutput.appendPlainText(openpharm.__description__)
-
-        end = time.time()
-        if (end - st) < 1.5:
-            time.sleep(1.5 - (end - st))
         self.print_log('Start OpenPharm GUI')
 
     def init_pymol(self):
@@ -157,12 +153,35 @@ class OpenPharmWidget(QtWidgets.QWidget):
         self.treeWidget.itemClicked.connect(lambda item: item.toggle())
         self.center_layout.addWidget(self.treeWidget)
 
+        """
         self.main_widget = PyMOLGLWidget(self)
         self.main_widget.fb_scale = 2
-        self.center_layout.addWidget(self.main_widget)
         pymol.cmd.bg_color('white')
         pymol.cmd.pseudoatom('dummy')
         pymol.cmd.delete('dummy')
+        """
+        self.main_widget = QtWidgets.QStackedWidget()
+        self.main_widget.setMinimumSize(640, 480)
+        self.main_widget.setStyleSheet("background-color: white;")
+
+        pixlabel = QtWidgets.QLabel()
+        image = QtGui.QImage(str(IMAGE_DIR / 'loading_image.png'))
+        image = image.scaled(640, 480, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+        pixmap = QtGui.QPixmap(image)
+        pixlabel.setAlignment(QtCore.Qt.AlignCenter)
+        pixlabel.setPixmap(pixmap)
+        pixlabel.setMinimumSize(640, 480)
+        pymol_widget = PyMOLGLWidget(self)
+        pymol_widget.fb_scale = 2
+        pymol.cmd.bg_color('white')
+        pymol.cmd.pseudoatom('dummy')
+        pymol.cmd.delete('dummy')
+
+        self.main_widget.addWidget(pixlabel)
+        self.main_widget.addWidget(pymol_widget)
+        self.main_widget.setCurrentIndex(0)
+
+        self.center_layout.addWidget(self.main_widget)
 
     def print_log(self, log):
         currentTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -209,6 +228,7 @@ class OpenPharmWidget(QtWidgets.QWidget):
         self.signal.stateInitial.emit()
 
     def state_protein_loaded(self):
+        self.main_widget.setCurrentIndex(1)
         self.pdbEnter.setEnabled(False)
         self.proteinButton.setEnabled(False)
         self.ligandButton.setEnabled(True)
@@ -220,6 +240,7 @@ class OpenPharmWidget(QtWidgets.QWidget):
         self.signal.stateProteinLoaded.emit()
 
     def state_ligand_loaded(self):
+        self.main_widget.setCurrentIndex(1)
         self.pdbEnter.setEnabled(False)
         self.proteinButton.setEnabled(False)
         self.ligandButton.setEnabled(True)
@@ -242,6 +263,7 @@ class OpenPharmWidget(QtWidgets.QWidget):
         self.signal.stateModelLoaded.emit()
 
     def state_all_stop(self):
+        self.main_widget.setCurrentIndex(1)
         self.pdbEnter.setEnabled(False)
         self.proteinButton.setEnabled(False)
         self.ligandButton.setEnabled(False)
