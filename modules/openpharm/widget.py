@@ -251,3 +251,8 @@ class OpenPharmWidget(QtWidgets.QWidget):
         self.runScreeningButton.setEnabled(False)
         self.clearButton.setEnabled(False)
         self.signal.stateAllStop.emit()
+
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.RightButton:
+            return
+        super().mousePressEvent(event)

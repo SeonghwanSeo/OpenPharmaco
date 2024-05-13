@@ -4,11 +4,21 @@ from pathlib import Path
 import json
 
 import pymol
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore, QtGui
 
 from .parse import download_pdb, parse_pdb
 from .objects.pmnet_dialog import PMProgressDialog
 from .screening_window import ScreeningDialog
+
+
+def openWiki(self):
+    url = QtCore.QUrl('https://github.com/SeonghwanSeo/OpenPharm/wiki')
+    QtGui.QDesktopServices.openUrl(url)
+
+
+def openPaper(self):
+    url = QtCore.QUrl('https://arxiv.org/abs/2310.00681')
+    QtGui.QDesktopServices.openUrl(url)
 
 
 def exportPyMOL(self):

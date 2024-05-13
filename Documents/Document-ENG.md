@@ -4,8 +4,6 @@
 
 OpenPharm powers PharmacoNet's graphical user interface for fully automated protein-based pharmacophore modeling and ultra-fast virtual screening with deep learning.
 
-This manual is performed on macOS.
-
 Development and maintenance: Seonghwan Seo (Laboratory of Prof. Woo Yeon Kim, Department of Chemistry, KAIST)
 
 If you use OpenPharm in your work, please cite: 
@@ -31,7 +29,7 @@ cd OpenPharm
 # Install conda environment
 conda env create -f environment.yml
 conda activate openpharm
-python setup.py install
+pip install .
 ```
 
 ### 1-2. Launch

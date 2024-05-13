@@ -24,7 +24,7 @@ git clone https://github.com/SeonghwanSeo/OpenPharm.git
 cd OpenPharm/
 conda env create -f environment.yml
 conda activate openpharm
-python setup.py install
+pip install .
 
 # Start
 openpharm
