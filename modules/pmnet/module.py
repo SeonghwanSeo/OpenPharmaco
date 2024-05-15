@@ -24,6 +24,11 @@ from .data.extract_pocket import extract_pocket
 from .utils.smoothing import GaussianSmoothing
 
 from .pharmacophore_model import PharmacophoreModel
+try:
+    import numba
+    MOLVOXEL_LIBRARY = 'numba'
+except:
+    MOLVOXEL_LIBRARY = 'numpy'
 
 
 DEFAULT_FOCUS_THRESHOLD = 0.5
@@ -70,7 +75,7 @@ class PharmacoNet():
 
         in_resolution = config.VOXEL.IN.RESOLUTION
         in_size = config.VOXEL.IN.SIZE
-        self.in_voxelizer: BaseVoxelizer = create_voxelizer(in_resolution, in_size, sigma=(1 / 3))
+        self.in_voxelizer: BaseVoxelizer = create_voxelizer(in_resolution, in_size, sigma=(1 / 3), library=MOLVOXEL_LIBRARY)
         self.pocket_cutoff = (in_resolution * in_size * math.sqrt(3) / 2) + 5.0
         self.out_resolution = config.VOXEL.OUT.RESOLUTION
         self.out_size = config.VOXEL.OUT.SIZE

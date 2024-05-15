@@ -1,4 +1,4 @@
-name: openpharm
+name: pmgui
 channels:
   - conda-forge
   - pytorch

@@ -1,4 +1,3 @@
-import time
 from pathlib import Path
 from collections import OrderedDict
 from datetime import datetime
@@ -9,7 +8,6 @@ from PyQt5.QtCore import pyqtSignal, QObject
 
 import pymol
 from pmg_qt.pymol_gl_widget import PyMOLGLWidget
-from pmg_qt.pymol_qt_gui import PyMOLGLWidget
 
 from . import actions, objects
 from .setting import IMAGE_DIR
@@ -17,7 +15,7 @@ from .setting import IMAGE_DIR
 from typing import Optional
 
 
-class OpenPharmSignal(QObject):
+class PMGUISignal(QObject):
     stateInitial = pyqtSignal()
     stateProteinLoaded = pyqtSignal()
     stateLigandLoaded = pyqtSignal()
@@ -25,10 +23,10 @@ class OpenPharmSignal(QObject):
     stateAllStop = pyqtSignal()
 
 
-class OpenPharmWidget(QtWidgets.QWidget):
+class PMGUIWidget(QtWidgets.QWidget):
     def __init__(self, window):  # noqa
         super().__init__()
-        self.signal = OpenPharmSignal()
+        self.signal = PMGUISignal()
         self.window = window
         self.setAcceptDrops(True)
         self.init_pymol()
@@ -54,11 +52,11 @@ class OpenPharmWidget(QtWidgets.QWidget):
 
     def _setup_pmnet(self):
         # NOTE: Load PharmacoNet
-        import openpharm
+        import pmgui
         from pmnet import PharmacophoreModel
         from pmnet.module import PharmacoNet
 
-        MODULE_PATH = Path(openpharm.__file__).parent.parent
+        MODULE_PATH = Path(pmgui.__file__).parent.parent
         weight_path = MODULE_PATH / 'weight' / 'model.tar'
         if not weight_path.exists():
             dialog = objects.download_dialog.DownloadDialog(self, weight_path)
@@ -66,8 +64,8 @@ class OpenPharmWidget(QtWidgets.QWidget):
         self.module: PharmacoNet = PharmacoNet(str(weight_path))
         self.pharmacophore_model: Optional[PharmacophoreModel] = None
         self.pharmacophore_model_name: Optional[str] = None
-        self.logOutput.appendPlainText(openpharm.__description__)
-        self.print_log('Start OpenPharm GUI')
+        self.logOutput.appendPlainText(pmgui.__description__)
+        self.print_log('Start PharmacoGUI')
 
     def init_pymol(self):
         options = pymol.invocation.options

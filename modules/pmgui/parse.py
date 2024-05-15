@@ -1,9 +1,9 @@
-from openbabel import pybel
 from urllib.request import urlopen
 from pathlib import Path
+from os import PathLike
 
 import pymol
-from os import PathLike
+
 from typing import Dict
 
 
@@ -21,6 +21,7 @@ def download_pdb(pdb_code: str, output_file: PathLike[str]):
 
 
 def parse_pdb(pdb_code: str, protein_path: PathLike[str], save_pdb_dir: PathLike[str]) -> Dict[str, str]:
+    from openbabel import pybel
     protein: pybel.Molecule = next(pybel.readfile('pdb', str(protein_path)))
     if 'HET' not in protein.data.keys():
         return {}

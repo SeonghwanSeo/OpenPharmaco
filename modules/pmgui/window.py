@@ -1,31 +1,26 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
-import time
 
-import openpharm
-from openpharm import actions
-from openpharm.widget import OpenPharmWidget
-from openpharm.setting import DARKMODE_STYLESHEET, IMAGE_DIR
+from pmgui.setting import DARKMODE_STYLESHEET, IMAGE_DIR
 
 
-class OpenPharmWindow(QtWidgets.QMainWindow):
+class PMGUIWindow(QtWidgets.QMainWindow):
     def __init__(self, filename=None):  # noqa
         super().__init__()
-        self.setup_menu()
-        self.setWindowTitle('OpenPharmGUI')
+        self.setWindowTitle('PharmacoGUI')
         self.setWindowIcon(QtGui.QIcon(str(IMAGE_DIR / 'favicon.ico')))
-        self.main_widget = OpenPharmWidget(self)
-        self.setCentralWidget(self.main_widget)
-        self.main_widget.setMinimumSize(960, 720)
-        self.setMinimumSize(960, 720)
-        self.main_widget.signal.stateInitial.connect(self.state_initial)
-        self.main_widget.signal.stateProteinLoaded.connect(self.state_protein_loaded)
-        self.main_widget.signal.stateLigandLoaded.connect(self.state_ligand_loaded)
-        self.main_widget.signal.stateModelLoaded.connect(self.state_model_loaded)
-        self.main_widget.signal.stateAllStop.connect(self.state_all_stop)
-        self._filename = filename
         self.setStyleSheet(DARKMODE_STYLESHEET)
+        self.menuBar()
+        self._filename = filename
 
     def show(self):
+        # Loading image
+        splash = self.get_splash()
+        splash.show()
+        self.init_UI()
+        splash.close()
+        super().show()
+
+    def get_splash(self):
         image = QtGui.QImage(str(IMAGE_DIR / 'loading_image.png'))
         image = image.scaled(640, 480, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
         pixmap = QtGui.QPixmap.fromImage(image)
@@ -33,15 +28,32 @@ class OpenPharmWindow(QtWidgets.QMainWindow):
         rect = splash.geometry()
         rect.moveCenter(self.geometry().center())
         splash.move(rect.topLeft())
-        splash.show()
-        if self._filename is not None:
-            self.main_widget.setup(self._filename)
-        else:
-            self.main_widget.setup()
-        splash.close()
-        super().show()
+        return splash
+
+    def init_UI(self):
+        self.setup_menu()
+        self.setup_widget()
+
+    def setup_widget(self):
+        from pmgui.widget import PMGUIWidget
+        center = self.geometry().center()
+        self.main_widget = PMGUIWidget(self)
+        self.main_widget.setMinimumSize(960, 720)
+        self.setCentralWidget(self.main_widget)
+        self.setMinimumSize(960, 720)
+        rect = self.geometry()
+        rect.moveCenter(center)
+        self.move(rect.topLeft())
+
+        self.main_widget.signal.stateInitial.connect(self.state_initial)
+        self.main_widget.signal.stateProteinLoaded.connect(self.state_protein_loaded)
+        self.main_widget.signal.stateLigandLoaded.connect(self.state_ligand_loaded)
+        self.main_widget.signal.stateModelLoaded.connect(self.state_model_loaded)
+        self.main_widget.signal.stateAllStop.connect(self.state_all_stop)
+        self.main_widget.setup(self._filename)
 
     def setup_menu(self):
+        from pmgui import actions
         menubar = self.menuBar()
         self.menu_dict = {}
         filemenu = menubar.addMenu('File')

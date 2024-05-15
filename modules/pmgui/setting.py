@@ -1,4 +1,4 @@
-import openpharm
+import pmgui
 from pathlib import Path
 
 PROTEIN_COLOR = 'gray90'
@@ -73,7 +73,7 @@ INTERACTION_COLOR_DICT_GUI = {
     'Halogen Atom': 'yellow',
 }
 
-IMAGE_DIR = Path(openpharm.__file__).parent / 'images'
+IMAGE_DIR = Path(pmgui.__file__).parent / 'images'
 
 DARKMODE_STYLESHEET = f"""
     QMainWindow {{

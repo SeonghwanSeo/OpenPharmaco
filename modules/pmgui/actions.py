@@ -12,7 +12,7 @@ from .screening_window import ScreeningDialog
 
 
 def openWiki(self):
-    url = QtCore.QUrl('https://github.com/SeonghwanSeo/OpenPharm/wiki')
+    url = QtCore.QUrl('https://github.com/SeonghwanSeo/PharmacoGUI/wiki')
     QtGui.QDesktopServices.openUrl(url)
 
 

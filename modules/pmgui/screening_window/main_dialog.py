@@ -7,10 +7,9 @@ from PyQt5 import QtWidgets, QtCore
 
 from typing import List, Optional, Dict, Tuple
 
-from pmnet import PharmacophoreModel
 from .utils import SettingDialog, ParameterSpinBox, FileQTableWidgetItem, ScoreQTableWidgetItem, EmptyQTableWidgetItem
 
-from openpharm.setting import DARKMODE_STYLESHEET
+from pmgui.setting import DARKMODE_STYLESHEET
 
 
 # NOTE: Parameters
