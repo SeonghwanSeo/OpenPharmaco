@@ -1,23 +1,23 @@
 from setuptools import setup, find_packages
-from modules.pmgui import __version__
+from modules.openph_gui import __version__
 
 with open('./README.md', encoding='utf-8') as f:
     long_description = f.read()
 
 
 setup(
-    name='pmgui',
+    name='openpharmaco',
     version=__version__,
-    description='PharmacoGUI: Open-source Protein-based Pharmacophore Modeling Tool',
+    description='OpenPharmaco: Open-Source Software for Protein-based Pharmacophore Modeling and Virtual Screening',
     long_description=long_description,
     long_description_content_type='text/markdown',
     author='Seonghwan Seo',
     author_email='shwan0106@kaist.ac.kr',
-    url='https://github.com/SeonghwanSeo/PharmacoGUI',
+    url='https://github.com/SeonghwanSeo/OpenPharmaco',
     packages=find_packages(where='modules'),
     package_dir={'': 'modules'},
     package_data={
-        'pmgui': ['images/favicon.ico', 'images/loading_image.png', 'images/down_arrow.png', 'images/right_arrow.png', 'images/down_arrow_spinbox.png', 'images/up_arrow_spinbox.png']
+        'openph_gui': ['images/favicon.ico', 'images/OpenPharmaco.png', 'images/down_arrow.png', 'images/right_arrow.png', 'images/down_arrow_spinbox.png', 'images/up_arrow_spinbox.png']
     },
     install_requires=[
         'torch==1.13.1',
@@ -49,8 +49,9 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "_pmgui = pmgui.main:main",
-            "pmgui = pmgui.main:run",
+            "_openpharmaco = openph_gui.main:main",
+            "openph = openph_gui.main:run",
+            "openpharmaco = openph_gui.main:run",
         ]
     },
 )

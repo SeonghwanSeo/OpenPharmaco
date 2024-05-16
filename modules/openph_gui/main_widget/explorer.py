@@ -4,14 +4,14 @@ import pymol
 
 from typing import Dict, Optional
 
-from pmgui import setting as SETTING
+from openph_gui import setting as SETTING
 
 
-class ViewerQTreeWidget(QtWidgets.QTreeWidget):
+class OpenPHExplorer(QtWidgets.QTreeWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setStyleSheet("""
-            QTreeWidget::item:selected {
+            Item::item:selected {
                 background-color: white;
                 color: black;
             }
@@ -49,11 +49,11 @@ class ViewerQTreeWidget(QtWidgets.QTreeWidget):
                 self.takeTopLevelItem(self.indexOfTopLevelItem(item))
         pymol.cmd.select('Surrounding', 'byres (point* around 10) and Chain_* and elem C')
         pymol.cmd.deselect()
-        ChainHighlight(self, binding_site, 'Surrounding')
-        ElementVisualize(self, 'Residues', 'residue*')
-        ElementVisualize(self, 'Hotspots', 'hotspot*')
-        ElementVisualize(self, 'Interactions', 'interaction*')
-        ElementVisualize(self, 'Points', 'point*')
+        ChainHighlightItem(self, binding_site, 'Surrounding')
+        ElementVisualizeItem(self, 'Residues', 'residue*')
+        ElementVisualizeItem(self, 'Hotspots', 'hotspot*')
+        ElementVisualizeItem(self, 'Interactions', 'interaction*')
+        ElementVisualizeItem(self, 'Points', 'point*')
 
         pymol.cmd.enable('Chain_*')
         pymol.cmd.set('sphere_scale', 0.2, 'hotspot*')
@@ -142,7 +142,7 @@ class LigandItem(ToggleItem):
         pymol.cmd.color(SETTING.PROTEIN_COLOR, f'Chain* and elem C')
 
 
-class ProteinElementQTreeWidget(ToggleItem):
+class ProteinElementItem(ToggleItem):
     TYPE = 'ProteinElement'
 
     def __init__(self, parent, name, *args, **kwargs):
@@ -159,7 +159,7 @@ class ProteinElementQTreeWidget(ToggleItem):
         pymol.cmd.hide(self.pymol_name, f'Chain*')
 
 
-class ProteinChainQTreeWidget(ToggleItem):
+class ProteinChainItem(ToggleItem):
     TYPE = 'ProteinChain'
 
     def __init__(self, parent, name, *args, **kwargs):
@@ -184,16 +184,16 @@ class ProteinItem(ToggleItem):
         self.pymol_name = name
         pymol.cmd.color(SETTING.PROTEIN_COLOR, f'{name} and elem C')
         for chain in pymol.cmd.get_chains(name):
-            item = ProteinChainQTreeWidget(self, chain)
+            item = ProteinChainItem(self, chain)
             item.enable()
         pymol.cmd.delete(name)
         pymol.cmd.group(name, 'Chain*')
 
-        stick = ProteinElementQTreeWidget(self, 'sticks')
-        line = ProteinElementQTreeWidget(self, 'lines')
-        cartoon = ProteinElementQTreeWidget(self, 'cartoon')
-        mesh = ProteinElementQTreeWidget(self, 'mesh')
-        surface = ProteinElementQTreeWidget(self, 'surface')
+        stick = ProteinElementItem(self, 'sticks')
+        line = ProteinElementItem(self, 'lines')
+        cartoon = ProteinElementItem(self, 'cartoon')
+        mesh = ProteinElementItem(self, 'mesh')
+        surface = ProteinElementItem(self, 'surface')
         stick.disable()
         line.disable()
         cartoon.enable()
@@ -301,7 +301,7 @@ class ModelNodeElementItem(ToggleItem):
         pymol.cmd.disable(self.pymol_name)
 
 
-class ChainHighlight(ToggleItem):
+class ChainHighlightItem(ToggleItem):
     TYPE = 'Visualize'
 
     def __init__(self, parent, name, pymol_name, *args, **kwargs):
@@ -321,7 +321,7 @@ class ChainHighlight(ToggleItem):
         pymol.cmd.deselect()
 
 
-class ElementVisualize(ToggleItem):
+class ElementVisualizeItem(ToggleItem):
     TYPE = 'Visualize'
 
     def __init__(self, parent, name, pymol_name, *args, **kwargs):

@@ -3,7 +3,6 @@ from PyQt5.QtCore import QThread, pyqtSignal
 import time
 import gdown
 import os
-import shutil
 
 
 class DownloadWorker(QThread):
@@ -34,7 +33,7 @@ class ProgressWorker(QThread):
             time.sleep(2)
 
 
-class DownloadDialog(QtWidgets.QDialog):
+class GDownDialog(QtWidgets.QDialog):
     def __init__(self, parent, weight_path):
         super().__init__(parent)
 

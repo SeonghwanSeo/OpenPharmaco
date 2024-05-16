@@ -1,12 +1,12 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
 
-from pmgui.setting import DARKMODE_STYLESHEET, IMAGE_DIR
+from openph_gui.setting import DARKMODE_STYLESHEET, IMAGE_DIR
 
 
-class PMGUIWindow(QtWidgets.QMainWindow):
+class OpenPHWindow(QtWidgets.QMainWindow):
     def __init__(self, filename=None):  # noqa
         super().__init__()
-        self.setWindowTitle('PharmacoGUI')
+        self.setWindowTitle('OpenPharmaco')
         self.setWindowIcon(QtGui.QIcon(str(IMAGE_DIR / 'favicon.ico')))
         self.setStyleSheet(DARKMODE_STYLESHEET)
         self.menuBar()
@@ -21,7 +21,8 @@ class PMGUIWindow(QtWidgets.QMainWindow):
         super().show()
 
     def get_splash(self):
-        image = QtGui.QImage(str(IMAGE_DIR / 'loading_image.png'))
+        print(str(IMAGE_DIR / 'OpenPharmaco.png'))
+        image = QtGui.QImage(str(IMAGE_DIR / 'OpenPharmaco.png'))
         image = image.scaled(640, 480, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
         pixmap = QtGui.QPixmap.fromImage(image)
         splash = QtWidgets.QSplashScreen(pixmap)
@@ -35,9 +36,9 @@ class PMGUIWindow(QtWidgets.QMainWindow):
         self.setup_widget()
 
     def setup_widget(self):
-        from pmgui.widget import PMGUIWidget
+        from openph_gui.main_widget import OpenPHWidget
         center = self.geometry().center()
-        self.main_widget = PMGUIWidget(self)
+        self.main_widget = OpenPHWidget(self)
         self.main_widget.setMinimumSize(960, 720)
         self.setCentralWidget(self.main_widget)
         self.setMinimumSize(960, 720)
@@ -53,7 +54,7 @@ class PMGUIWindow(QtWidgets.QMainWindow):
         self.main_widget.setup(self._filename)
 
     def setup_menu(self):
-        from pmgui import actions
+        from openph_gui import actions
         menubar = self.menuBar()
         self.menu_dict = {}
         filemenu = menubar.addMenu('File')

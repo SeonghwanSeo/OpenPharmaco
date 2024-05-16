@@ -24,8 +24,8 @@ if TYPE_CHECKING:
 
 # NOTE: Parameters
 DEFAULT_WEIGHTS: Dict[str, float] = dict(
-    Cation=8,
-    Anion=8,
+    Cation=4,
+    Anion=4,
     Aromatic=4,
     HBond_donor=4,
     HBond_acceptor=4,

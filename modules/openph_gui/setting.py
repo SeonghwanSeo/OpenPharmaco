@@ -1,5 +1,6 @@
-import pmgui
 from pathlib import Path
+
+IMAGE_DIR = Path(__file__).parent / 'images'
 
 PROTEIN_COLOR = 'gray90'
 PROTEIN_HIGHLIGHT_COLOR = 'red'
@@ -72,8 +73,6 @@ INTERACTION_COLOR_DICT_GUI = {
     'H-Bond Acceptor': 'magenta',
     'Halogen Atom': 'yellow',
 }
-
-IMAGE_DIR = Path(pmgui.__file__).parent / 'images'
 
 DARKMODE_STYLESHEET = f"""
     QMainWindow {{

@@ -4,9 +4,9 @@ __citation_information__ = (
     "PharmacoNet: Accelerating Large-Scale Virtual Screening by Deep Pharmacophore Modeling. "
     "In NeurIPS 2023 Workshop on New Frontiers of AI for Drug Discovery and Development."
 )
-__maintainer__ = "Seonghwan Seo, KAIST (https://github.com/SeonghwanSeo/PharmacoGUI)"
+__maintainer__ = "Seonghwan Seo, KAIST (https://github.com/SeonghwanSeo/OpenPharmaco)"
 __description__ = (
-    f"PharmacoGUI: Open-source Protein-based Pharmacophore Modeling Tool powerd by PharmacoNet (version {__version__})\n"
-    f'If you use PharmacoGUI in your work, please cite: "{__citation_information__}"\n'
+    f"OpenPharmaco: Open-Source Software for Protein-based Pharmacophore Modeling and Virtual Screening powerd by PharmacoNet (version {__version__})\n"
+    f'If you use OpenPharmaco in your work, please cite: "{__citation_information__}"\n'
     f"Created and maintained by {__maintainer__}\n"
 )

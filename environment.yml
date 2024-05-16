@@ -1,4 +1,4 @@
-name: pmgui
+name: openph
 channels:
   - conda-forge
   - pytorch

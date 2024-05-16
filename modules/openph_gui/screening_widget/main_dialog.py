@@ -9,13 +9,13 @@ from typing import List, Optional, Dict, Tuple
 
 from .utils import SettingDialog, ParameterSpinBox, FileQTableWidgetItem, ScoreQTableWidgetItem, EmptyQTableWidgetItem
 
-from pmgui.setting import DARKMODE_STYLESHEET
+from openph_gui.setting import DARKMODE_STYLESHEET
 
 
 # NOTE: Parameters
 DEFAULT_WEIGHTS: Dict[str, float] = {
-    'Cation': 8,
-    'Anion': 8,
+    'Cation': 4,
+    'Anion': 4,
     'Aromatic': 4,
     'H-Bond Donor': 4,
     'H-Bond Acceptor': 4,

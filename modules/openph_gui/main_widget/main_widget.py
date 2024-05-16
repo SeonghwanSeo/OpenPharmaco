@@ -9,13 +9,14 @@ from PyQt5.QtCore import pyqtSignal, QObject
 import pymol
 from pmg_qt.pymol_gl_widget import PyMOLGLWidget
 
-from . import actions, objects
-from .setting import IMAGE_DIR
+from openph_gui import actions
+from openph_gui.main_widget.explorer import OpenPHExplorer
+from openph_gui.setting import IMAGE_DIR
 
 from typing import Optional
 
 
-class PMGUISignal(QObject):
+class Signal(QObject):
     stateInitial = pyqtSignal()
     stateProteinLoaded = pyqtSignal()
     stateLigandLoaded = pyqtSignal()
@@ -23,10 +24,10 @@ class PMGUISignal(QObject):
     stateAllStop = pyqtSignal()
 
 
-class PMGUIWidget(QtWidgets.QWidget):
+class OpenPHWidget(QtWidgets.QWidget):
     def __init__(self, window):  # noqa
         super().__init__()
-        self.signal = PMGUISignal()
+        self.signal = Signal()
         self.window = window
         self.setAcceptDrops(True)
         self.init_pymol()
@@ -52,20 +53,21 @@ class PMGUIWidget(QtWidgets.QWidget):
 
     def _setup_pmnet(self):
         # NOTE: Load PharmacoNet
-        import pmgui
+        import openph_gui
         from pmnet import PharmacophoreModel
         from pmnet.module import PharmacoNet
 
-        MODULE_PATH = Path(pmgui.__file__).parent.parent
+        MODULE_PATH = Path(openph_gui.__file__).parent.parent
         weight_path = MODULE_PATH / 'weight' / 'model.tar'
         if not weight_path.exists():
-            dialog = objects.download_dialog.DownloadDialog(self, weight_path)
+            from openph_gui.dialogs.gdown_dialog import GDownDialog
+            dialog = GDownDialog(self, weight_path)
             dialog.exec_()
         self.module: PharmacoNet = PharmacoNet(str(weight_path))
         self.pharmacophore_model: Optional[PharmacophoreModel] = None
         self.pharmacophore_model_name: Optional[str] = None
-        self.logOutput.appendPlainText(pmgui.__description__)
-        self.print_log('Start PharmacoGUI')
+        self.logOutput.appendPlainText(openph_gui.__description__)
+        self.print_log('Start OpenPharmaco')
 
     def init_pymol(self):
         options = pymol.invocation.options
@@ -147,23 +149,16 @@ class PMGUIWidget(QtWidgets.QWidget):
         self.ext_log_layout.addWidget(self.logOutput)
 
         # NOTE: Center Layout
-        self.treeWidget = objects.explorer.ViewerQTreeWidget(self)
+        self.treeWidget = OpenPHExplorer(self)
         self.treeWidget.itemClicked.connect(lambda item: item.toggle())
         self.center_layout.addWidget(self.treeWidget)
 
-        """
-        self.main_widget = PyMOLGLWidget(self)
-        self.main_widget.fb_scale = 2
-        pymol.cmd.bg_color('white')
-        pymol.cmd.pseudoatom('dummy')
-        pymol.cmd.delete('dummy')
-        """
         self.main_widget = QtWidgets.QStackedWidget()
         self.main_widget.setMinimumSize(640, 480)
         self.main_widget.setStyleSheet("background-color: white;")
 
         pixlabel = QtWidgets.QLabel()
-        image = QtGui.QImage(str(IMAGE_DIR / 'loading_image.png'))
+        image = QtGui.QImage(str(IMAGE_DIR / 'OpenPharmaco.png'))
         image = image.scaled(640, 480, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
         pixmap = QtGui.QPixmap(image)
         pixlabel.setAlignment(QtCore.Qt.AlignCenter)
