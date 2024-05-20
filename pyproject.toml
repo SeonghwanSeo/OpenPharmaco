@@ -23,8 +23,6 @@ classifiers = [
 
 dependencies = [
   "torch==1.13.1",
-  "torchvision==0.14.1",
-  "timm==0.9.12",
   "numpy>=1.26",
   "numba>=0.59",
   "omegaconf>=2.3.0",
@@ -53,18 +51,11 @@ where = ["modules"]
 
 [tool.ruff]
 target-version = "py310"
+line-length = 120
 
 [tool.ruff.lint]
-select = [
-  "E",
-  "F",
-  "B",
-  "UP",
-  "T203",
-]
-ignore = [
-  "E501"
-]
+select = ["E", "F", "B", "UP", "T203",]
+ignore = ["E501"]
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = [
