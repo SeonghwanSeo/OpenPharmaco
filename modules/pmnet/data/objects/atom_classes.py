@@ -3,13 +3,12 @@ from openbabel.pybel import ob
 import numpy as np
 
 from collections.abc import Sequence
-from typing import Sequence, List, Tuple
 from numpy.typing import NDArray
 from functools import cached_property
 
 from . import utils
 
-Tuple3D = Tuple[float, float, float]
+tuple3D = tuple[float, float, float]
 
 
 @dataclass
@@ -49,7 +48,7 @@ class Point3D(Sequence):
 
 
 @dataclass
-class BaseInteractablePart():
+class BaseInteractablePart:
 
     @property
     def small(self):
@@ -96,9 +95,11 @@ class BaseHBondDonor(BaseInteractablePart):
 
     def __post_init__(self):
         self.coords = Point3D.from_obatom(self.obatom)
-        hydrogens = [neigh for neigh in ob.OBAtomAtomIter(self.obatom)
-                     if neigh.GetAtomicNum() == 1
-                     ]
+        hydrogens = [
+            neigh
+            for neigh in ob.OBAtomAtomIter(self.obatom)
+            if neigh.GetAtomicNum() == 1
+        ]
         self.hydrogens = hydrogens
         self.hydrogen_coords_list = [Point3D.from_obatom(h) for h in hydrogens]
 
@@ -114,16 +115,14 @@ class BaseRing(BaseInteractablePart):
     normal: NDArray = field(init=False)
 
     def __post_init__(self):
-        coords_list = np.array(
-            [utils.ob_coords(obatom) for obatom in self.obatoms]
-        )
+        coords_list = np.array([utils.ob_coords(obatom) for obatom in self.obatoms])
         self.center = Point3D.from_array(np.mean(coords_list, axis=0))
         p1, p2, p3 = coords_list[0], coords_list[2], coords_list[4]
         v1, v2 = utils.vector(p1, p2), utils.vector(p1, p3)
         self.normal = utils.normalize(np.cross(v1, v2))
 
     @property
-    def indices(self) -> List[int]:
+    def indices(self) -> list[int]:
         return [obatom.GetIdx() - 1 for obatom in self.obatoms]
 
 
@@ -137,11 +136,13 @@ class BaseCharged(BaseInteractablePart):
             if len(self.obatoms) == 1:
                 self.center = Point3D.from_obatom(self.obatoms[0])
             else:
-                coords_list = np.array([utils.ob_coords(obatom) for obatom in self.obatoms])
+                coords_list = np.array(
+                    [utils.ob_coords(obatom) for obatom in self.obatoms]
+                )
                 self.center = Point3D.from_array(np.mean(coords_list, axis=0))
 
     @property
-    def indices(self) -> List[int]:
+    def indices(self) -> list[int]:
         return [obatom.GetIdx() - 1 for obatom in self.obatoms]
 
 
@@ -180,7 +181,7 @@ class BaseXBondDonor(BaseInteractablePart):
         return self.C.GetIdx() - 1
 
     @property
-    def indices(self) -> List[int]:
+    def indices(self) -> list[int]:
         return [self.X_index, self.C_index]
 
 
@@ -204,7 +205,7 @@ class BaseXBondAcceptor(BaseInteractablePart):
         return self.Y.GetIdx() - 1
 
     @property
-    def indices(self) -> List[int]:
+    def indices(self) -> list[int]:
         return [self.O_index, self.Y_index]
 
 

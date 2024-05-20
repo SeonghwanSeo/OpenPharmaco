@@ -29,7 +29,7 @@ class PMNetWorker(QThread):
 class PMProgressDialog(QtWidgets.QDialog):
     def __init__(self, parent, module, protein_path, ligand_path):
         super().__init__(parent)
-        self.setWindowTitle('PharmacoNet Running...')
+        self.setWindowTitle("PharmacoNet Running...")
         self.setGeometry(150, 25, 300, 50)
         layout = QtWidgets.QVBoxLayout()
         self.statusLabel = QtWidgets.QLabel("Starting...", self)
@@ -51,7 +51,9 @@ class PMProgressDialog(QtWidgets.QDialog):
 
     def center_on_parent(self):
         parent_geometry = self.parent().window.geometry()
-        parent_center = parent_geometry.topLeft() + self.parent().ext_layout.geometry().center()
+        parent_center = (
+            parent_geometry.topLeft() + self.parent().ext_layout.geometry().center()
+        )
         rect = self.geometry()
         rect.moveCenter(parent_center)
         self.move(rect.topLeft())

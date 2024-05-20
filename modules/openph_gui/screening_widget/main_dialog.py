@@ -5,28 +5,30 @@ from functools import partial
 
 from PyQt5 import QtWidgets, QtCore
 
-from typing import List, Optional, Dict, Tuple
-
-from .utils import SettingDialog, ParameterSpinBox, FileQTableWidgetItem, ScoreQTableWidgetItem, EmptyQTableWidgetItem
+from .utils import (
+    SettingDialog,
+    ParameterSpinBox,
+    FileQTableWidgetItem,
+    ScoreQTableWidgetItem,
+    EmptyQTableWidgetItem,
+)
 
 from openph_gui.setting import DARKMODE_STYLESHEET
 
 
 # NOTE: Parameters
-DEFAULT_WEIGHTS: Dict[str, float] = {
-    'Cation': 4,
-    'Anion': 4,
-    'Aromatic': 4,
-    'H-Bond Donor': 4,
-    'H-Bond Acceptor': 4,
-    'Halogen Atom': 4,
-    'Hydrophobic': 1,
+DEFAULT_WEIGHTS: dict[str, float] = {
+    "Cation": 4.0,
+    "Anion": 4.0,
+    "Aromatic": 4.0,
+    "H-Bond Donor": 4.0,
+    "H-Bond Acceptor": 4.0,
+    "Halogen Atom": 4.0,
+    "Hydrophobic": 1.0,
 }
 
 # NOTE: Parameters
-DEFAULT_SETTING = {
-    'Library Key': 'Name'
-}
+DEFAULT_SETTING = {"Library Key": "Name"}
 
 
 def worker(stop_event, work_queue, result_queue, pharmacophore_model, parameter):
@@ -41,18 +43,20 @@ def worker(stop_event, work_queue, result_queue, pharmacophore_model, parameter)
 
 class ScreeningDialog(QtWidgets.QDialog):
     def __init__(self, parent):
+        from pmnet import PharmacophoreModel
+
         super().__init__(parent)
         self.setStyleSheet(DARKMODE_STYLESHEET)
         self.setAcceptDrops(True)
-        self.setWindowTitle('Screening')
+        self.setWindowTitle("Screening")
         self.setGeometry(300, 300, 720, 360)
         self.pharmacophore_model: PharmacophoreModel = parent.pharmacophore_model
         self.setting = DEFAULT_SETTING.copy()
         self.parameter = DEFAULT_WEIGHTS.copy()
 
-        self.library: List[Path] = []
-        self.library_path: Optional[Path] = None
-        self.result: List[Tuple[Path, float]] = []
+        self.library: list[Path] = []
+        self.library_path: Path | None = None
+        self.result: list[tuple[Path, float]] = []
         self.run_finished: bool = False
         self.saved: bool = False
         self.init_UI()
@@ -75,7 +79,7 @@ class ScreeningDialog(QtWidgets.QDialog):
         main_layout.setStretch(0, 1)
         main_layout.setStretch(1, 3)
 
-        self.libraryButton = QtWidgets.QPushButton('Library', self)
+        self.libraryButton = QtWidgets.QPushButton("Library", self)
         self.libraryButton.setMaximumHeight(25)
         self.libraryButton.clicked.connect(self.action_library)
         setting_layout.addWidget(self.libraryButton, 0, 0, 1, 1)
@@ -86,7 +90,7 @@ class ScreeningDialog(QtWidgets.QDialog):
         self.libraryLabel.setMaximumHeight(25)
         setting_layout.addWidget(self.libraryLabel, 0, 1, 1, 7)
 
-        self.cpuLabel = QtWidgets.QLabel('CPUs')
+        self.cpuLabel = QtWidgets.QLabel("CPUs")
         self.cpuLabel.setAlignment(QtCore.Qt.AlignCenter)
         setting_layout.addWidget(self.cpuLabel, 1, 0, 1, 1)
         self.cpuSlider = QtWidgets.QSlider(QtCore.Qt.Horizontal, self)
@@ -106,25 +110,25 @@ class ScreeningDialog(QtWidgets.QDialog):
         self.cpuSpinBox.valueChanged[int].connect(lambda v: self.cpuSlider.setValue(v))
         setting_layout.addWidget(self.cpuSpinBox, 1, 3, 1, 1)
 
-        self.runButton = QtWidgets.QPushButton('Run!', self)
+        self.runButton = QtWidgets.QPushButton("Run!", self)
         self.runButton.clicked.connect(self.action_run)
         self.runButton.setMaximumHeight(25)
         self.runButton.setAutoDefault(False)
         self.runButton.setDefault(False)
         setting_layout.addWidget(self.runButton, 1, 4, 1, 1)
-        self.saveButton = QtWidgets.QPushButton('Save', self)
+        self.saveButton = QtWidgets.QPushButton("Save", self)
         self.saveButton.clicked.connect(self.action_save)
         self.saveButton.setMaximumHeight(25)
         self.saveButton.setAutoDefault(False)
         self.saveButton.setDefault(False)
         setting_layout.addWidget(self.saveButton, 1, 5, 1, 1)
-        self.clearButton = QtWidgets.QPushButton('Clear', self)
+        self.clearButton = QtWidgets.QPushButton("Clear", self)
         self.clearButton.clicked.connect(self.action_clear)
         self.clearButton.setMaximumHeight(25)
         self.clearButton.setAutoDefault(False)
         self.clearButton.setDefault(False)
         setting_layout.addWidget(self.clearButton, 1, 6, 1, 1)
-        self.advancedButton = QtWidgets.QPushButton('Advanced', self)
+        self.advancedButton = QtWidgets.QPushButton("Advanced", self)
         self.advancedButton.clicked.connect(self.action_advanced)
         self.advancedButton.setMaximumHeight(25)
         self.advancedButton.setAutoDefault(False)
@@ -132,13 +136,22 @@ class ScreeningDialog(QtWidgets.QDialog):
         setting_layout.addWidget(self.advancedButton, 1, 7, 1, 1)
 
         parameter_grid_layout = QtWidgets.QGridLayout()
-        parameterLabel = QtWidgets.QLabel('Parameter Setting')
+        parameterLabel = QtWidgets.QLabel("Parameter Setting")
         parameterLabel.setMinimumWidth(200)
         parameterLabel.setAlignment(QtCore.Qt.AlignCenter)
         parameter_grid_layout.addWidget(parameterLabel, 0, 0, 1, 2)
         self.parameter_widget_dict = {}
-        for i, key in enumerate(['Cation', 'Anion', 'H-Bond Donor', 'H-Bond Acceptor',
-                                 'Halogen Atom', 'Aromatic', 'Hydrophobic']):
+        for i, key in enumerate(
+            [
+                "Cation",
+                "Anion",
+                "H-Bond Donor",
+                "H-Bond Acceptor",
+                "Halogen Atom",
+                "Aromatic",
+                "Hydrophobic",
+            ]
+        ):
             label = QtWidgets.QLabel(key)
             spinbox = ParameterSpinBox(self, key, self.parameter)
             spinbox.setMaximumHeight(20)
@@ -146,7 +159,7 @@ class ScreeningDialog(QtWidgets.QDialog):
             self.parameter_widget_dict[key] = spinbox
             parameter_grid_layout.addWidget(label, i + 1, 0, 1, 1)
             parameter_grid_layout.addWidget(spinbox, i + 1, 1, 1, 1)
-        self.resetParameterButton = QtWidgets.QPushButton('Reset All')
+        self.resetParameterButton = QtWidgets.QPushButton("Reset All")
         self.resetParameterButton.clicked.connect(self.action_reset_parameter)
         self.resetParameterButton.setAutoDefault(False)
         self.resetParameterButton.setDefault(False)
@@ -156,10 +169,10 @@ class ScreeningDialog(QtWidgets.QDialog):
         parameter_layout.setStretch(0, 0)
         parameter_layout.addStretch()
 
-        self.tableLabel = QtWidgets.QLabel('Library not loaded')
+        self.tableLabel = QtWidgets.QLabel("Library not loaded")
         self.tableWidget = QtWidgets.QTableWidget()
         self.tableWidget.setColumnCount(2)
-        self.tableWidget.setHorizontalHeaderLabels(['Key', 'Score'])
+        self.tableWidget.setHorizontalHeaderLabels(["Key", "Score"])
         header = self.tableWidget.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
@@ -184,15 +197,19 @@ class ScreeningDialog(QtWidgets.QDialog):
     def setup_library(self, directory):
         self.libraryLabel.setPlainText(directory)
         self.library_path = Path(directory)
-        self.library = list(self.library_path.rglob('*.sdf')) + list(self.library_path.rglob('*.mol2'))
+        self.library = list(self.library_path.rglob("*.sdf")) + list(
+            self.library_path.rglob("*.mol2")
+        )
         self.state_library_load()
 
         self.tableWidget.setRowCount(len(self.library))
         for i, file in enumerate(self.library):
-            item = FileQTableWidgetItem(file, self.library_path, self.setting['Library Key'] == 'Path')
+            item = FileQTableWidgetItem(
+                file, self.library_path, self.setting["Library Key"] == "Path"
+            )
             self.tableWidget.setItem(i, 0, item)
             self.tableWidget.setItem(i, 1, EmptyQTableWidgetItem())
-        self.tableLabel.setText(f'Library Size: {len(self.library)} Molecules')
+        self.tableLabel.setText(f"Library Size: {len(self.library)} Molecules")
         self.result = [None] * len(self.library)
         self.state_library_load()
 
@@ -205,22 +222,31 @@ class ScreeningDialog(QtWidgets.QDialog):
             work_queue.put(path)
 
         weight = {
-            'Cation': self.parameter['Cation'],
-            'Anion': self.parameter['Anion'],
-            'Aromatic': self.parameter['Aromatic'],
-            'HBond_donor': self.parameter['H-Bond Donor'],
-            'HBond_acceptor': self.parameter['H-Bond Acceptor'],
-            'Halogen': self.parameter['Halogen Atom'],
-            'Hydrophobic': self.parameter['Hydrophobic'],
+            "Cation": self.parameter["Cation"],
+            "Anion": self.parameter["Anion"],
+            "Aromatic": self.parameter["Aromatic"],
+            "HBond_donor": self.parameter["H-Bond Donor"],
+            "HBond_acceptor": self.parameter["H-Bond Acceptor"],
+            "Halogen": self.parameter["Halogen Atom"],
+            "Hydrophobic": self.parameter["Hydrophobic"],
         }
         self.state_all_stop()
 
         stop_event = multiprocessing.Event()
-        _worker = partial(worker, pharmacophore_model=self.pharmacophore_model, parameter=weight)
-        processes = [multiprocessing.Process(target=_worker, args=(stop_event, work_queue, result_queue)) for _ in range(self.cpu)]
+        _worker = partial(
+            worker, pharmacophore_model=self.pharmacophore_model, parameter=weight
+        )
+        processes = [
+            multiprocessing.Process(
+                target=_worker, args=(stop_event, work_queue, result_queue)
+            )
+            for _ in range(self.cpu)
+        ]
         for p in processes:
             p.start()
-        progress_dialog = QtWidgets.QProgressDialog("Screening...", "Abort", 0, num_items, self)
+        progress_dialog = QtWidgets.QProgressDialog(
+            "Screening...", "Abort", 0, num_items, self
+        )
         progress_dialog.setCancelButton(None)
         progress_dialog.setAutoClose(True)
         progress_dialog.show()
@@ -246,7 +272,9 @@ class ScreeningDialog(QtWidgets.QDialog):
         else:
             self.result.sort(key=(lambda item: item[1]), reverse=True)
             for index, (file, score) in enumerate(self.result):
-                item = FileQTableWidgetItem(file, self.library_path, self.setting['Library Key'] == 'Path')
+                item = FileQTableWidgetItem(
+                    file, self.library_path, self.setting["Library Key"] == "Path"
+                )
                 self.tableWidget.setItem(index, 0, item)
                 self.tableWidget.setItem(index, 1, ScoreQTableWidgetItem(score))
             self.state_run_finished()
@@ -255,10 +283,12 @@ class ScreeningDialog(QtWidgets.QDialog):
         if not self.saved:
             reply = QtWidgets.QMessageBox.question(
                 self,
-                'Clear Confirmation',
-                'Do you want to save the result before clearing the session?',
-                QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.Cancel,
-                QtWidgets.QMessageBox.Cancel
+                "Clear Confirmation",
+                "Do you want to save the result before clearing the session?",
+                QtWidgets.QMessageBox.Discard
+                | QtWidgets.QMessageBox.Save
+                | QtWidgets.QMessageBox.Cancel,
+                QtWidgets.QMessageBox.Cancel,
             )
             if reply == QtWidgets.QMessageBox.Cancel:
                 return
@@ -277,17 +307,17 @@ class ScreeningDialog(QtWidgets.QDialog):
             "Result Save File",
             Path(self.library_path).stem,
             "Result Files (*.csv *.txt)",
-            options=options
+            options=options,
         )
         if fileName:
             self.saved = True
-            with open(fileName, 'w') as w:
-                w.write('Key,PharmacoNetScore\n')
+            with open(fileName, "w") as w:
+                w.write("Key,PharmacoNetScore\n")
                 for file, score in self.result:
-                    if self.setting['Library Key'] == 'Name':
-                        w.write(f'{file.stem},{score:.4f}\n')
+                    if self.setting["Library Key"] == "Name":
+                        w.write(f"{file.stem},{score:.4f}\n")
                     else:
-                        w.write(f'{file.relative_to(self.library_path)},{score:.4f}\n')
+                        w.write(f"{file.relative_to(self.library_path)},{score:.4f}\n")
 
     def action_advanced(self):
         initial_setting = self.setting.copy()
@@ -295,10 +325,10 @@ class ScreeningDialog(QtWidgets.QDialog):
         dialog.exec_()
         # NOTE: Library Key
         if self.library_path is not None:
-            if initial_setting['Library Key'] != self.setting['Library Key']:
+            if initial_setting["Library Key"] != self.setting["Library Key"]:
                 for index in range(len(self.library)):
                     item = self.tableWidget.item(index, 0)
-                    if self.setting['Library Key'] == 'Name':
+                    if self.setting["Library Key"] == "Name":
                         item.to_filename()
                     else:
                         item.to_filepath()
@@ -320,10 +350,12 @@ class ScreeningDialog(QtWidgets.QDialog):
         if self.run_finished and not self.saved:
             reply = QtWidgets.QMessageBox.question(
                 self,
-                'Clear Confirmation',
-                'Do you want to save the result before close?',
-                QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.Cancel,
-                QtWidgets.QMessageBox.Cancel
+                "Clear Confirmation",
+                "Do you want to save the result before close?",
+                QtWidgets.QMessageBox.Discard
+                | QtWidgets.QMessageBox.Save
+                | QtWidgets.QMessageBox.Cancel,
+                QtWidgets.QMessageBox.Cancel,
             )
             if reply == QtWidgets.QMessageBox.Cancel:
                 event.ignore()

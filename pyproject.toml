@@ -1,0 +1,83 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openpharmaco"
+version = "1.0.0"  # replace this with the actual version if known
+description = "OpenPharmaco: Open-Source Software for Protein-based Pharmacophore Modeling and Virtual Screening"
+license = { text = "MIT" }
+authors = [{ name = "Seonghwan Seo", email = "shwan0106@kaist.ac.kr" }]
+requires-python = ">=3.10"
+classifiers = [
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Development Status :: 4 - Beta",
+  "Operating System :: OS Independent",
+  "License :: OSI Approved :: MIT License",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
+  "Topic :: Scientific/Engineering :: Chemistry",
+  "Programming Language :: Python :: 3.10"
+]
+
+dependencies = [
+  "torch==1.13.1",
+  "torchvision==0.14.1",
+  "timm==0.9.12",
+  "numpy>=1.26",
+  "numba>=0.59",
+  "omegaconf>=2.3.0",
+  "molvoxel==0.1.3",
+  "gdown>=5.1.0",
+  "biopython>=1.83"
+]
+
+[project.urls]
+Website = "https://github.com/SeonghwanSeo/OpenPharmaco"
+"Source Code" = "https://github.com/SeonghwanSeo/OpenPharmaco"
+Documentation = "https://github.com/SeonghwanSeo/OpenPharmaco.wiki"
+
+[project.scripts]
+_openpharmaco = "openph_gui.cmd:main"
+openph = "openph_gui.cmd:run"
+openpharmaco = "openph_gui.cmd:run"
+
+[tool.setuptools.packages.find]
+where = ["modules"]
+
+[tool.setuptools.package-data]
+"openph_gui" = ["images/*"]
+
+# CODING
+
+[tool.ruff]
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+  "E",
+  "F",
+  "B",
+  "UP",
+  "T203",
+]
+ignore = [
+  "E501"
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = [
+    "F401", # imported but unused
+    "E402", # Module level import not at top of file
+]
+
+[tool.pyright]
+pythonVersion = "3.10"
+typeCheckingMode = "standard"
+diagnosticMode = "openFilesOnly"
+reportImplicitStringConcatenation = false
+reportGeneralTypeIssues = "warning"
+reportDeprecated = "warning"
+reportUnusedVariable = false
+reportUnusedImport = false

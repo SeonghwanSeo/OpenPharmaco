@@ -11,7 +11,11 @@ class DownloadWorker(QThread):
         self.weight_path = weight_path
 
     def run(self):
-        gdown.download('https://drive.google.com/uc?id=1gzjdM7bD3jPm23LBcDXtkSk18nETL04p', self.weight_path, quiet=True)
+        gdown.download(
+            "https://drive.google.com/uc?id=1gzjdM7bD3jPm23LBcDXtkSk18nETL04p",
+            self.weight_path,
+            quiet=True,
+        )
 
 
 class ProgressWorker(QThread):
@@ -26,23 +30,23 @@ class ProgressWorker(QThread):
             size = 0
             for file in self.weight_dir.iterdir():
                 size += os.path.getsize(file)
-            size = int(size / (1024 ** 2))
+            size = int(size / (1024**2))
             self.progress.emit(min(int(size / 130 * 100), 100))
             if size > 130:
                 break
-            time.sleep(2)
+            time.sleep(0.5)
 
 
 class GDownDialog(QtWidgets.QDialog):
     def __init__(self, parent, weight_path):
         super().__init__(parent)
 
-        self.setWindowTitle('Google Drive Download')
+        self.setWindowTitle("PharmacoNet Installation")
         self.setGeometry(600, 200, 300, 100)
         self.setMinimumSize(200, 100)
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowCloseButtonHint)
         layout = QtWidgets.QVBoxLayout()
-        self.statusLabel = QtWidgets.QLabel("Download PharmacoNet...", self)
+        self.statusLabel = QtWidgets.QLabel("Download PharmacoNet (139 MB) ...", self)
         layout.addWidget(self.statusLabel)
         self.progressBar = QtWidgets.QProgressBar(self)
         self.progressBar.setMaximum(100)

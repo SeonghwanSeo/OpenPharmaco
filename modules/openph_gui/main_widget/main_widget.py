@@ -13,8 +13,6 @@ from openph_gui import actions
 from openph_gui.main_widget.explorer import OpenPHExplorer
 from openph_gui.setting import IMAGE_DIR
 
-from typing import Optional
-
 
 class Signal(QObject):
     stateInitial = pyqtSignal()
@@ -35,9 +33,9 @@ class OpenPHWidget(QtWidgets.QWidget):
         self.add_widgets()
         self.resize_layout()
         self.state_initial()
-        self.protein: Optional[str] = None
-        self.protein_path: Optional[str] = None
-        self.binding_site: Optional[str] = None
+        self.protein: str | None = None
+        self.protein_path: str | None = None
+        self.binding_site: str | None = None
         self.ligand_path_dict: OrderedDict[str, str] = OrderedDict()
 
     def sizeHint(self):
@@ -46,10 +44,10 @@ class OpenPHWidget(QtWidgets.QWidget):
     def setup(self, filename=None):
         self._setup_pmnet()
         if filename:
-            if os.path.splitext(filename)[-1] == '.pm':
+            if os.path.splitext(filename)[-1] == ".pm":
                 actions.setup_model(self, filename)
             else:
-                self.print_log(f'Invalid filename ({filename}), require `.pm`')
+                self.print_log(f"Invalid filename ({filename}), require `.pm`")
 
     def _setup_pmnet(self):
         # NOTE: Load PharmacoNet
@@ -58,16 +56,17 @@ class OpenPHWidget(QtWidgets.QWidget):
         from pmnet.module import PharmacoNet
 
         MODULE_PATH = Path(openph_gui.__file__).parent.parent
-        weight_path = MODULE_PATH / 'weight' / 'model.tar'
+        weight_path = MODULE_PATH / "weight" / "model.tar"
         if not weight_path.exists():
             from openph_gui.dialogs.gdown_dialog import GDownDialog
+
             dialog = GDownDialog(self, weight_path)
             dialog.exec_()
         self.module: PharmacoNet = PharmacoNet(str(weight_path))
-        self.pharmacophore_model: Optional[PharmacophoreModel] = None
-        self.pharmacophore_model_name: Optional[str] = None
+        self.pharmacophore_model: PharmacophoreModel | None = None
+        self.pharmacophore_model_name: str | None = None
         self.logOutput.appendPlainText(openph_gui.__description__)
-        self.print_log('Start OpenPharmaco')
+        self.print_log("Start OpenPharmaco")
 
     def init_pymol(self):
         options = pymol.invocation.options
@@ -158,17 +157,19 @@ class OpenPHWidget(QtWidgets.QWidget):
         self.main_widget.setStyleSheet("background-color: white;")
 
         pixlabel = QtWidgets.QLabel()
-        image = QtGui.QImage(str(IMAGE_DIR / 'OpenPharmaco.png'))
-        image = image.scaled(640, 480, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+        image = QtGui.QImage(str(IMAGE_DIR / "OpenPharmaco.png"))
+        image = image.scaled(
+            640, 480, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation
+        )
         pixmap = QtGui.QPixmap(image)
         pixlabel.setAlignment(QtCore.Qt.AlignCenter)
         pixlabel.setPixmap(pixmap)
         pixlabel.setMinimumSize(640, 480)
         pymol_widget = PyMOLGLWidget(self)
         pymol_widget.fb_scale = 2
-        pymol.cmd.bg_color('white')
-        pymol.cmd.pseudoatom('dummy')
-        pymol.cmd.delete('dummy')
+        pymol.cmd.bg_color("white")
+        pymol.cmd.pseudoatom("dummy")
+        pymol.cmd.delete("dummy")
 
         self.main_widget.addWidget(pixlabel)
         self.main_widget.addWidget(pymol_widget)
@@ -177,8 +178,8 @@ class OpenPHWidget(QtWidgets.QWidget):
         self.center_layout.addWidget(self.main_widget)
 
     def print_log(self, log):
-        currentTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        self.logOutput.appendPlainText(f'{currentTime}> {log}')
+        currentTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.logOutput.appendPlainText(f"{currentTime}> {log}")
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls:
@@ -197,12 +198,12 @@ class OpenPHWidget(QtWidgets.QWidget):
             event.accept()
 
     def load_dialog(self, filename):
-        if os.path.splitext(filename)[-1] == '.pm':
+        if os.path.splitext(filename)[-1] == ".pm":
             if self.protein is not None:
                 actions.clearSession(self)
             actions.setup_model(self, filename)
         else:
-            self.print_log(f'Invalid File: {filename}')
+            self.print_log(f"Invalid File: {filename}")
 
     def state_initial(self):
         self.protein = None

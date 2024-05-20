@@ -1,77 +1,77 @@
 from pathlib import Path
 
-IMAGE_DIR = Path(__file__).parent / 'images'
+IMAGE_DIR = Path(__file__).parent / "images"
 
-PROTEIN_COLOR = 'gray90'
-PROTEIN_HIGHLIGHT_COLOR = 'red'
-RESIDUE_HIGHLIGHT_COLOR = 'black'
+PROTEIN_COLOR = "gray90"
+PROTEIN_HIGHLIGHT_COLOR = "red"
+RESIDUE_HIGHLIGHT_COLOR = "black"
 
 PHARMACOPHORE_COLOR_DICT = {
-    'Hydrophobic': 'orange',
-    'Aromatic': 'deeppurple',
-    'Cation': 'blue',
-    'Anion': 'red',
-    'HBond_acceptor': 'magenta',
-    'HBond_donor': 'cyan',
-    'Halogen': 'yellow',
+    "Hydrophobic": "orange",
+    "Aromatic": "deeppurple",
+    "Cation": "blue",
+    "Anion": "red",
+    "HBond_acceptor": "magenta",
+    "HBond_donor": "cyan",
+    "Halogen": "yellow",
 }
 
 INTERACTION_COLOR_DICT = {
-    'Hydrophobic': 'orange',
-    'PiStacking_P': 'deeppurple',
-    'PiStacking_T': 'deeppurple',
-    'PiCation_lring': 'blue',
-    'PiCation_pring': 'deeppurple',
-    'HBond_ldon': 'magenta',
-    'HBond_pdon': 'cyan',
-    'SaltBridge_lneg': 'blue',
-    'SaltBridge_pneg': 'red',
-    'XBond': 'yellow',
+    "Hydrophobic": "orange",
+    "PiStacking_P": "deeppurple",
+    "PiStacking_T": "deeppurple",
+    "PiCation_lring": "blue",
+    "PiCation_pring": "deeppurple",
+    "HBond_ldon": "magenta",
+    "HBond_pdon": "cyan",
+    "SaltBridge_lneg": "blue",
+    "SaltBridge_pneg": "red",
+    "XBond": "yellow",
 }
 
 INTERACTION_TYPE_DICT = {
-    'Hydrophobic': 'Hydrophobic',
-    'PiStacking_P': 'Aromatic',
-    'PiStacking_T': 'Aromatic',
-    'PiCation_lring': 'Aromatic',
-    'PiCation_pring': 'Cation',
-    'HBond_ldon': 'H-Bond Donor',
-    'HBond_pdon': 'H-Bond Acceptor',
-    'SaltBridge_lneg': 'Anion',
-    'SaltBridge_pneg': 'Cation',
-    'XBond': 'Halogen Atom',
+    "Hydrophobic": "Hydrophobic",
+    "PiStacking_P": "Aromatic",
+    "PiStacking_T": "Aromatic",
+    "PiCation_lring": "Aromatic",
+    "PiCation_pring": "Cation",
+    "HBond_ldon": "H-Bond Donor",
+    "HBond_pdon": "H-Bond Acceptor",
+    "SaltBridge_lneg": "Anion",
+    "SaltBridge_pneg": "Cation",
+    "XBond": "Halogen Atom",
 }
 
 INTERACTION_NAME_DICT = {
-    'Hydrophobic': 'Hydrophobic',
-    'PiStacking_P': 'PiStacking (Parallel)',
-    'PiStacking_T': 'PiStacking (T-shaped)',
-    'PiCation_lring': 'Pi-Cation',
-    'PiCation_pring': 'Pi-Cation',
-    'HBond_ldon': 'H-Bond',
-    'HBond_pdon': 'H-Bond',
-    'SaltBridge_lneg': 'Salt Bridge',
-    'SaltBridge_pneg': 'Salt Bridge',
-    'XBond': 'Halogen Bond',
+    "Hydrophobic": "Hydrophobic",
+    "PiStacking_P": "PiStacking (Parallel)",
+    "PiStacking_T": "PiStacking (T-shaped)",
+    "PiCation_lring": "Pi-Cation",
+    "PiCation_pring": "Pi-Cation",
+    "HBond_ldon": "H-Bond",
+    "HBond_pdon": "H-Bond",
+    "SaltBridge_lneg": "Salt Bridge",
+    "SaltBridge_pneg": "Salt Bridge",
+    "XBond": "Halogen Bond",
 }
 INTERACTION_TYPE_KEYS = [
-    'Hydrophobic',
-    'Aromatic',
-    'Anion',
-    'Cation',
-    'H-Bond Donor',
-    'H-Bond Acceptor',
-    'Halogen Atom',
+    "Hydrophobic",
+    "Aromatic",
+    "Anion",
+    "Cation",
+    "H-Bond Donor",
+    "H-Bond Acceptor",
+    "Halogen Atom",
 ]
 
 INTERACTION_COLOR_DICT_GUI = {
-    'Hydrophobic': 'orange',
-    'Aromatic': 'purple',
-    'Anion': 'red',
-    'Cation': 'blue',
-    'H-Bond Donor': 'cyan',
-    'H-Bond Acceptor': 'magenta',
-    'Halogen Atom': 'yellow',
+    "Hydrophobic": "orange",
+    "Aromatic": "purple",
+    "Anion": "red",
+    "Cation": "blue",
+    "H-Bond Donor": "cyan",
+    "H-Bond Acceptor": "magenta",
+    "Halogen Atom": "yellow",
 }
 
 DARKMODE_STYLESHEET = f"""

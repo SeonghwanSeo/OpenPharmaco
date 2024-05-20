@@ -1,7 +1,6 @@
 import numpy as np
 import math
 
-from typing import Tuple, List
 from numpy.typing import NDArray, ArrayLike
 
 from .objects import Protein
@@ -10,7 +9,7 @@ from . import constant as C
 
 def get_token_informations(
     protein_obj: Protein,
-) -> Tuple[NDArray[np.float32], NDArray[np.int16]]:
+) -> tuple[NDArray[np.float32], NDArray[np.int16]]:
     """get token information
 
     Args:
@@ -20,20 +19,23 @@ def get_token_informations(
         token_positions: [float, (N, 3)] token center positions
         token_classes: [int, (N,)] token interaction type
     """
-    num_tokens = \
-        len(protein_obj.hydrophobic_atoms_all) + \
-        len(protein_obj.rings_all) * 3 + \
-        len(protein_obj.hbond_donors_all) + \
-        len(protein_obj.hbond_acceptors_all) + \
-        len(protein_obj.pos_charged_atoms_all) * 2 + \
-        len(protein_obj.neg_charged_atoms_all) + \
-        len(protein_obj.xbond_acceptors_all)
+    num_tokens = (
+        len(protein_obj.hydrophobic_atoms_all)
+        + len(protein_obj.rings_all) * 3
+        + len(protein_obj.hbond_donors_all)
+        + len(protein_obj.hbond_acceptors_all)
+        + len(protein_obj.pos_charged_atoms_all) * 2
+        + len(protein_obj.neg_charged_atoms_all)
+        + len(protein_obj.xbond_acceptors_all)
+    )
 
-    positions: List[Tuple[float, float, float]] = []
-    classes: List[int] = []
+    positions: list[tuple[float, float, float]] = []
+    classes: list[int] = []
 
     # NOTE: Hydrophobic
-    positions.extend(tuple(hydrop.coords) for hydrop in protein_obj.hydrophobic_atoms_all)
+    positions.extend(
+        tuple(hydrop.coords) for hydrop in protein_obj.hydrophobic_atoms_all
+    )
     classes.extend([C.HYDROPHOBIC] * len(protein_obj.hydrophobic_atoms_all))
 
     # NOTE: PiStacking_P
@@ -45,7 +47,9 @@ def get_token_informations(
     classes.extend([C.PISTACKING_T] * len(protein_obj.rings_all))
 
     # NOTE: PiCation_lring
-    positions.extend(tuple(cation.center) for cation in protein_obj.pos_charged_atoms_all)
+    positions.extend(
+        tuple(cation.center) for cation in protein_obj.pos_charged_atoms_all
+    )
     classes.extend([C.PICATION_LRING] * len(protein_obj.pos_charged_atoms_all))
 
     # NOTE: PiCation_pring
@@ -53,7 +57,9 @@ def get_token_informations(
     classes.extend([C.PICATION_PRING] * len(protein_obj.rings_all))
 
     # NOTE: HBond_ldon
-    positions.extend(tuple(acceptor.coords) for acceptor in protein_obj.hbond_acceptors_all)
+    positions.extend(
+        tuple(acceptor.coords) for acceptor in protein_obj.hbond_acceptors_all
+    )
     classes.extend([C.HBOND_LDON] * len(protein_obj.hbond_acceptors_all))
 
     # NOTE: HBond_pdon
@@ -61,7 +67,9 @@ def get_token_informations(
     classes.extend([C.HBOND_PDON] * len(protein_obj.hbond_donors_all))
 
     # NOTE: Saltbridge_lneg
-    positions.extend(tuple(cation.center) for cation in protein_obj.pos_charged_atoms_all)
+    positions.extend(
+        tuple(cation.center) for cation in protein_obj.pos_charged_atoms_all
+    )
     classes.extend([C.SALTBRIDGE_LNEG] * len(protein_obj.pos_charged_atoms_all))
 
     # NOTE: Saltbridge_pneg
@@ -69,7 +77,9 @@ def get_token_informations(
     classes.extend([C.SALTBRIDGE_PNEG] * len(protein_obj.neg_charged_atoms_all))
 
     # NOTE: XBond
-    positions.extend(tuple(acceptor.O_coords) for acceptor in protein_obj.xbond_acceptors_all)
+    positions.extend(
+        tuple(acceptor.O_coords) for acceptor in protein_obj.xbond_acceptors_all
+    )
     classes.extend([C.XBOND] * len(protein_obj.xbond_acceptors_all))
 
     assert len(positions) == len(classes) == num_tokens
@@ -85,7 +95,7 @@ def get_token_and_filter(
     center: NDArray[np.float32],
     resolution: float,
     dimension: int,
-) -> Tuple[NDArray[np.int16], NDArray[np.int16]]:
+) -> tuple[NDArray[np.int16], NDArray[np.int16]]:
     """Create token and Filtering valid instances
 
     Args:
@@ -134,10 +144,20 @@ def get_box_area(
     """
     num_tokens = len(tokens)
     box_areas = np.zeros((num_tokens, dimension, dimension, dimension), dtype=np.bool_)
-    grids = np.stack(np.meshgrid(np.arange(dimension), np.arange(dimension), np.arange(dimension), indexing='ij'), 3)
+    grids = np.stack(
+        np.meshgrid(
+            np.arange(dimension),
+            np.arange(dimension),
+            np.arange(dimension),
+            indexing="ij",
+        ),
+        3,
+    )
     for i, (x, y, z, t) in enumerate(tokens):
         x, y, z, t = int(x), int(y), int(z), int(t)
         distances = np.linalg.norm(grids - np.array([[x, y, z]]), axis=-1)
-        threshold = math.ceil((C.INTERACTION_DIST[int(t)] + pharmacophore_size) / resolution)
+        threshold = math.ceil(
+            (C.INTERACTION_DIST[int(t)] + pharmacophore_size) / resolution
+        )
         box_areas[i] = distances < threshold
     return box_areas
