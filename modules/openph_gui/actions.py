@@ -81,46 +81,35 @@ def loadRCSB(self):
         flag = True
 
     if flag:
-        setup_protein(self, protein_path)
-        self.pdbEnter.setEnabled(False)
-        self.proteinButton.setEnabled(False)
-
-        ligand_path_dict = parse_pdb(pdb_code, protein_path, pdb_download_dir)
-        for ligand_key in sorted(ligand_path_dict.keys()):
-            setup_ligand(
-                self, ligand_key, ligand_path_dict[ligand_key], load_pymol=False
-            )
-        pymol.cmd.zoom()
-        self.treeWidget.setActiveLigand(list(ligand_path_dict.keys())[-1])
+        parse_pdb(self, pdb_code, protein_path, pdb_download_dir)
         self.print_log(
             f"Success to load {pdb_code}! ({len(self.ligand_path_dict)} ligands are detected)"
         )
-        if len(self.ligand_path_dict) > 0:
-            self.state_ligand_loaded()
-        else:
-            self.state_protein_loaded()
     else:
         self.print_log(f"Fail to load {pdb_code}")
 
 
 def openProtein(self):
-    filename, _ = QtWidgets.QFileDialog.getOpenFileName(
+    protein_path, _ = QtWidgets.QFileDialog.getOpenFileName(
         self, "Open Protein File", "", "PDB Files (*.pdb)"
     )
-    if filename:
-        self.print_log(f"Load {filename}")
-        setup_protein(self, filename, remove_ligand=True)
-        self.state_protein_loaded()
+    if protein_path:
+        self.print_log(f"Load {protein_path}")
+        prefix = Path(protein_path).stem.replace(" ", "_")
+        Path("./pdb/").mkdir(exist_ok=True)
+        pdb_download_dir = tempfile.TemporaryDirectory(prefix=f"{prefix}_", dir="./pdb")
+        parse_pdb(self, prefix, protein_path, pdb_download_dir.name)
 
 
 def openLigand(self):
     assert self.protein_path is not None
     filename, _ = QtWidgets.QFileDialog.getOpenFileName(
-        self, "Open Ligand File", "", "Mol Files (*.mol *.mol2 *.sdf)"
+        self, "Open Ligand File", "", "Mol Files (*.mol *.mol2 *.sdf *.pdb)"
     )
     if filename:
-        ligand_key = Path(filename).stem
-        setup_ligand(self, ligand_key, filename, load_pymol=True, is_active=True)
+        ligand_key = Path(filename).stem.replace(" ", "_")
+        print(ligand_key)
+        setup_ligand(self, ligand_key, filename, is_active=True)
         self.state_ligand_loaded()
 
 
@@ -137,7 +126,7 @@ def clearSession(self):
     pymol.cmd.reinitialize("everything")
     self.treeWidget.clear()
     self.state_initial()
-    self.print_log(f"Clear!")
+    self.print_log("Clear!")
 
 
 def modeling(self):
@@ -145,24 +134,25 @@ def modeling(self):
 
     assert self.protein_path is not None
 
-    ligand_path = self.treeWidget.active_ligand.filename
-    binding_site_name = self.treeWidget.active_ligand.name
-    pymol.cmd.disable(binding_site_name)
-    pymol.cmd.zoom(self.treeWidget.active_ligand.surrounding_name)
-
     self.state_all_stop()
-    self.print_log(f"Run Protein-based Pharmacophore Modeling...")
+    self.print_log("Run Protein-based Pharmacophore Modeling...")
 
-    def get_pharmacophore_model(text):
-        if text is not None:
-            self.pharmacophore_model = PharmacophoreModel()
-            self.pharmacophore_model.__setstate__(json.loads(text))
-        else:
-            return None
+    active_ligand = self.treeWidget.active_ligand
+    ligand_path = self.ligand_path_dict[active_ligand.key]
+    pymol.cmd.disable(active_ligand.key)
+    pymol.cmd.zoom(active_ligand.surrounding_key)
 
     progress_dialog = PMProgressDialog(
         self, self.module, self.protein_path, ligand_path
     )
+
+    def get_pharmacophore_model(jsonblock):
+        if jsonblock is not None:
+            self.pharmacophore_model = PharmacophoreModel()
+            self.pharmacophore_model.__setstate__(json.loads(jsonblock))
+        else:
+            return None
+
     progress_dialog.return_connect(get_pharmacophore_model)
     progress_dialog.exec_()
 
@@ -174,14 +164,13 @@ def modeling(self):
             self.treeWidget.takeTopLevelItem(self.treeWidget.indexOfTopLevelItem(item))
             self.treeWidget.ligand_dict = {}
             pymol.cmd.delete(item.name)
-            pymol.cmd.delete(item.surrounding_name)
-        self.binding_site = binding_site_name
+            pymol.cmd.delete(item.surrounding_key)
+        self.binding_site = active_ligand.name
         self.treeWidget.addModel(self.pharmacophore_model, self.binding_site)
-        pymol.cmd.zoom("Surrounding")
         self.state_model_loaded()
     else:
-        self.print_log(f"Stop Pharmacophore Modeling")
-        pymol.cmd.enable(binding_site_name)
+        self.print_log("Stop Pharmacophore Modeling")
+        pymol.cmd.enable(active_ligand.name)
         self.state_ligand_loaded()
 
 
@@ -191,31 +180,21 @@ def openScreening(self):
 
 
 # NOTE: FUNCTIONS
-def setup_protein(self, filename, remove_ligand=False):
-    pymol.cmd.load(str(filename))
-    self.protein = Path(filename).stem
+def setup_protein(self, filename):
+    self.protein = Path(filename).stem.replace(" ", "_")
     self.protein_path = filename
-    if remove_ligand:
-        pymol.cmd.remove("hetatm")
-    else:
-        pymol.cmd.remove("resn HOH,metal")
-    self.treeWidget.addProtein(self.protein)
+    self.treeWidget.addProtein(self.protein, self.protein_path)
+    pymol.cmd.bg_color("white")
 
 
-def setup_ligand(self, key, filename, load_pymol=True, is_active=False):
-    if load_pymol:
-        org_key = key
-        t = 0
-        while key in self.ligand_path_dict:
-            t += 1
-            key = org_key + f"_{t}"
-        pymol.cmd.load(str(filename), key)
-        self.print_log(f"Load {filename}")
-    else:
-        pymol.cmd.color("atom", f"{key}")
+def setup_ligand(self, name, filename, is_active=False):
+    t = 0
+    while f"{name}_{t}" in self.ligand_path_dict:
+        t += 1
+    key = f"{name}_{t}"
+    self.treeWidget.addBindingSite(name, key, filename)
     self.ligand_path_dict[key] = str(filename)
-
-    self.treeWidget.addBindingSite(key, filename)
+    self.print_log(f"Load {filename}")
     if is_active:
         self.treeWidget.setActiveLigand(key)
 
@@ -229,9 +208,8 @@ def setup_model(self, filename):
         protein_path = f"{direc}/{Path(filename).stem}.pdb"
         with open(protein_path, "w") as w:
             w.write(self.pharmacophore_model.pdbblock)
-        setup_protein(self, protein_path, remove_ligand=True)
+        setup_protein(self, protein_path)
     self.treeWidget.addModel(self.pharmacophore_model, self.protein)
-    pymol.cmd.zoom("NCI*")
     self.state_model_loaded()
 
 
@@ -249,41 +227,41 @@ def download_pdb(pdb_code: str, output_file):
         return False
 
 
-def parse_pdb(pdb_code: str, protein_path, save_pdb_dir) -> dict[str, str]:
-    from openbabel import pybel
+def parse_pdb(self, pdb_code: str, protein_path, save_pdb_dir):
+    from Bio.PDB import PDBParser, PDBIO, Select
 
-    protein: pybel.Molecule = next(pybel.readfile("pdb", str(protein_path)))
-    if "HET" not in protein.data.keys():
-        return {}
-    het_lines = protein.data["HET"].split("\n")
-    last_chain = protein.data["SEQRES"].split("\n")[-1].split()[1]
-    del protein
+    class LigandSelect(Select):
+        def __init__(self, ligand):
+            self.ligand = ligand
 
-    ligand_path_dict = {}
-    for idx, line in enumerate(het_lines):
-        vs = line.strip().split()
-        if len(vs) == 4:
-            ligid, authchain, residue_idx, _ = vs
-        else:
-            (
-                ligid,
-                authchain,
-                residue_idx,
-            ) = (
-                vs[0],
-                vs[1][0],
-                vs[1][1:],
-            )
-        if last_chain.startswith("Z"):
-            pdbchain = f"Z_{idx}"
-        else:
-            pdbchain = chr(ord(last_chain) + 1)
-        last_chain = pdbchain
-        ligand_key = f"{pdb_code}_{pdbchain}_{ligid}"
-        pymol.cmd.extract(
-            ligand_key, f"resn {ligid} and resi {residue_idx} and chain {authchain}"
-        )
-        ligand_path = str(Path(save_pdb_dir) / f"{ligand_key}.sdf")
-        pymol.cmd.save(ligand_path, ligand_key)
-        ligand_path_dict[ligand_key] = ligand_path
-    return ligand_path_dict
+        def accept_residue(self, residue):
+            return residue == self.ligand
+
+    parser = PDBParser(QUIET=True)
+    structure = parser.get_structure("structure", protein_path)
+    io = PDBIO()
+
+    ligand_path_list = []
+    for model in structure:
+        for chain in model:
+            for residue in chain:
+                hetflag, resseq, _ = residue.get_id()
+                if hetflag not in (" ", "W"):
+                    ligand_key = f"{pdb_code}_{chain.id}_{residue.get_resname()}"
+                    ligand_selector = LigandSelect(residue)
+                    ligand_path = os.path.join(
+                        save_pdb_dir,
+                        f"{ligand_key}_{resseq}.pdb",
+                    )
+                    io.set_structure(structure)
+                    io.save(ligand_path, select=ligand_selector)
+                    ligand_path_list.append((ligand_key, ligand_path))
+    setup_protein(self, protein_path)
+    for ligand_key, ligand_path in ligand_path_list:
+        setup_ligand(self, ligand_key, ligand_path)
+    pymol.cmd.zoom()
+    if len(self.ligand_path_dict) > 0:
+        self.treeWidget.setActiveLigand(list(self.ligand_path_dict.keys())[-1])
+        self.state_ligand_loaded()
+    else:
+        self.state_protein_loaded()

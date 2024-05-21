@@ -246,6 +246,7 @@ class OpenPHWidget(QtWidgets.QWidget):
         self.signal.stateLigandLoaded.emit()
 
     def state_model_loaded(self):
+        self.main_widget.setCurrentIndex(1)
         self.pdbEnter.setEnabled(False)
         self.proteinButton.setEnabled(False)
         self.ligandButton.setEnabled(False)

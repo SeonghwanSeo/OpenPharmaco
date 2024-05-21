@@ -2,8 +2,9 @@ from pathlib import Path
 
 IMAGE_DIR = Path(__file__).parent / "images"
 
+LIGAND_COLOR = "green"
 PROTEIN_COLOR = "gray90"
-PROTEIN_HIGHLIGHT_COLOR = "red"
+PROTEIN_HIGHLIGHT_COLOR = "purple"
 RESIDUE_HIGHLIGHT_COLOR = "black"
 
 PHARMACOPHORE_COLOR_DICT = {
