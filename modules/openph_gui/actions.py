@@ -3,12 +3,12 @@ import tempfile
 from pathlib import Path
 import json
 
-import pymol
 from urllib.request import urlopen
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 from openph_gui.dialogs.pmnet_dialog import PMProgressDialog
 from openph_gui.screening_widget import ScreeningDialog
+from openph_gui import molviewer
 
 
 def openWiki(self):
@@ -22,6 +22,8 @@ def openPaper(self):
 
 
 def exportPyMOL(self):
+    import pymol
+
     with tempfile.NamedTemporaryFile(suffix=".pse", delete=False) as fd:
         pass
     pymol.cmd.save(fd.name)
@@ -30,6 +32,8 @@ def exportPyMOL(self):
 
 
 def savePyMOLSession(self):
+    import pymol
+
     options = QtWidgets.QFileDialog.Options()
     fileName, _ = QtWidgets.QFileDialog.getSaveFileName(
         self, "Save PyMOL Session", "", "PyMOL Session Files (*.pse)", options=options
@@ -123,7 +127,7 @@ def clearSession(self):
     )
     if reply == QtWidgets.QMessageBox.No:
         return
-    pymol.cmd.reinitialize("everything")
+    molviewer.common.clear()
     self.treeWidget.clear()
     self.state_initial()
     self.print_log("Clear!")
@@ -139,8 +143,8 @@ def modeling(self):
 
     active_ligand = self.treeWidget.active_ligand
     ligand_path = self.ligand_path_dict[active_ligand.key]
-    pymol.cmd.disable(active_ligand.key)
-    pymol.cmd.zoom(active_ligand.surrounding_key)
+    molviewer.common.disable(active_ligand.key)
+    molviewer.common.zoom(active_ligand.surrounding_key)
 
     progress_dialog = PMProgressDialog(
         self, self.module, self.protein_path, ligand_path
@@ -163,14 +167,14 @@ def modeling(self):
         for item in self.treeWidget.ligand_dict.values():
             self.treeWidget.takeTopLevelItem(self.treeWidget.indexOfTopLevelItem(item))
             self.treeWidget.ligand_dict = {}
-            pymol.cmd.delete(item.name)
-            pymol.cmd.delete(item.surrounding_key)
+            molviewer.common.delete(item.name)
+            molviewer.common.delete(item.surrounding_key)
         self.binding_site = active_ligand.name
         self.treeWidget.addModel(self.pharmacophore_model, self.binding_site)
         self.state_model_loaded()
     else:
         self.print_log("Stop Pharmacophore Modeling")
-        pymol.cmd.enable(active_ligand.name)
+        molviewer.common.enable(active_ligand.name)
         self.state_ligand_loaded()
 
 
@@ -184,7 +188,7 @@ def setup_protein(self, filename):
     self.protein = Path(filename).stem.replace(" ", "_")
     self.protein_path = filename
     self.treeWidget.addProtein(self.protein, self.protein_path)
-    pymol.cmd.bg_color("white")
+    molviewer.common.bg_color("white")
 
 
 def setup_ligand(self, name, filename, is_active=False):
@@ -259,7 +263,7 @@ def parse_pdb(self, pdb_code: str, protein_path, save_pdb_dir):
     setup_protein(self, protein_path)
     for ligand_key, ligand_path in ligand_path_list:
         setup_ligand(self, ligand_key, ligand_path)
-    pymol.cmd.zoom()
+    molviewer.common.zoom()
     if len(self.ligand_path_dict) > 0:
         self.treeWidget.setActiveLigand(list(self.ligand_path_dict.keys())[-1])
         self.state_ligand_loaded()

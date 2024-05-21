@@ -7,7 +7,7 @@ PROTEIN_COLOR = "gray90"
 PROTEIN_HIGHLIGHT_COLOR = "purple"
 RESIDUE_HIGHLIGHT_COLOR = "black"
 
-PHARMACOPHORE_COLOR_DICT = {
+PHARMACOPHORE_POINT_COLOR_DICT = {
     "Hydrophobic": "orange",
     "Aromatic": "deeppurple",
     "Cation": "blue",
@@ -18,6 +18,19 @@ PHARMACOPHORE_COLOR_DICT = {
 }
 
 INTERACTION_COLOR_DICT = {
+    "Hydrophobic": "orange",
+    "PiStacking_P": "deeppurple",
+    "PiStacking_T": "deeppurple",
+    "PiCation_lring": "blue",
+    "PiCation_pring": "deeppurple",
+    "HBond_ldon": "magenta",
+    "HBond_pdon": "cyan",
+    "SaltBridge_lneg": "blue",
+    "SaltBridge_pneg": "red",
+    "XBond": "yellow",
+}
+
+HOTSPOT_COLOR_DICT = {
     "Hydrophobic": "orange",
     "PiStacking_P": "deeppurple",
     "PiStacking_T": "deeppurple",
