@@ -45,11 +45,7 @@ class ClusterMatchTree:
             self.pair_scores = parent.pair_scores
 
     @property
-    def score(self) -> float:
-        return self.edge_score
-
-    @property
-    def edge_score(self) -> float:
+    def max_score(self) -> float:
         if self.num_matches == 0:
             return 0.0
         return max(self.pair_scores.values())

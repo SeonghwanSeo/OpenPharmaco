@@ -12,7 +12,7 @@ from .tree import ClusterMatchTreeRoot
 
 try:
     from .match_utils_numba import scoring_matching_pair, scoring_matching_self
-except:
+except Exception:
     from .match_utils import scoring_matching_pair, scoring_matching_self
 
 
@@ -66,7 +66,11 @@ class GraphMatcher:
         model: PharmacophoreModel,
         ligand: Ligand,
         weights: dict[str, float] | None = None,
+        scoring_rule: str = "max",
     ):
+        assert scoring_rule in ("average", "max")
+        self.scoring_rule: str = scoring_rule
+
         self.model_graph: PharmacophoreModel = model
         self.ligand_graph: LigandGraph = ligand.graph
         self.num_atoms = ligand.num_atoms
@@ -78,9 +82,9 @@ class GraphMatcher:
             tuple[LigandNodeCluster, ModelNodeCluster],
             list[tuple[LigandNode, list[ModelNode], NDArray[np.float32]]],
         ]
-        self.weights: dict[str, float] = (
-            weights if weights is not None else DEFAULT_WEIGHTS
-        )
+        self.weights: dict[str, float] = DEFAULT_WEIGHTS.copy()
+        if weights is not None:
+            self.weights.update(weights)
 
     def setup(self):
         self.cluster_match_dict = self._get_cluster_match_dict()
@@ -93,21 +97,23 @@ class GraphMatcher:
             LigandClusterPair, dict[ModelClusterPair, tuple[float, ...]]
         ] = self._get_pair_scores()
 
-    def evaluate(self):
-        self.setup()
-        root_tree = self._run()
-        return list(root_tree.iteration())
-
-    def scoring(self) -> float:
+    def run(self) -> float:
         if len(self.ligand_graph.node_clusters) == 0:
             return 0
         self.setup()
         if len(self.ligand_cluster_list) == 0:
             return 0
-        root_tree = self._run()
-        return max(leaf.score for leaf in root_tree.iteration())
+        root_tree = self.run_tree()
+        if self.scoring_rule.startswith("max"):
+            return max(leaf.max_score for leaf in root_tree.iteration())
+        else:
+            scores = [0] * self.num_conformers
+            for leaf in root_tree.iteration():
+                for conformer_id, _score in leaf.pair_scores.items():
+                    scores[conformer_id] = max(_score, scores[conformer_id])
+            return sum(scores) / self.num_conformers
 
-    def _run(self) -> ClusterMatchTreeRoot:
+    def run_tree(self) -> ClusterMatchTreeRoot:
         root_tree = ClusterMatchTreeRoot(
             self.ligand_cluster_list,
             self.cluster_match_dict,
