@@ -82,9 +82,9 @@ class GraphMatcher:
             tuple[LigandNodeCluster, ModelNodeCluster],
             list[tuple[LigandNode, list[ModelNode], NDArray[np.float32]]],
         ]
-        self.weights: dict[str, float] = (
-            weights if weights is not None else DEFAULT_WEIGHTS
-        )
+        self.weights: dict[str, float] = DEFAULT_WEIGHTS.copy()
+        if weights is not None:
+            self.weights.update(weights)
 
     def setup(self):
         self.cluster_match_dict = self._get_cluster_match_dict()
