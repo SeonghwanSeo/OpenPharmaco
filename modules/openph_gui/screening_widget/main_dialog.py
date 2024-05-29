@@ -18,8 +18,8 @@ from openph_gui.setting import DARKMODE_STYLESHEET
 
 # NOTE: Parameters
 DEFAULT_WEIGHTS: dict[str, float] = {
-    "Cation": 4.0,
-    "Anion": 4.0,
+    "Cation": 8.0,
+    "Anion": 8.0,
     "Aromatic": 4.0,
     "H-Bond Donor": 4.0,
     "H-Bond Acceptor": 4.0,

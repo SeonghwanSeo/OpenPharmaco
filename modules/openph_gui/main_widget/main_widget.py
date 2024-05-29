@@ -39,7 +39,7 @@ class OpenPHWidget(QtWidgets.QWidget):
         self.ligand_path_dict: OrderedDict[str, str] = OrderedDict()
 
     def sizeHint(self):
-        return QtCore.QSize(640 + 320, 480 + 240)
+        return QtCore.QSize(320 + 640, 240 + 480)
 
     def setup(self, filename=None):
         self._setup_pmnet()
@@ -95,8 +95,8 @@ class OpenPHWidget(QtWidgets.QWidget):
         self.ext_layout.setStretch(0, 0)
         self.ext_layout.setStretch(1, 1)
         self.ext_layout.setSpacing(5)
-        self.center_layout.setStretch(0, 3)
-        self.center_layout.setStretch(1, 8)
+        self.center_layout.setStretch(0, 1)
+        self.center_layout.setStretch(1, 2)
 
     def add_widgets(self):
         # NOTE: Ext Layout
@@ -246,6 +246,7 @@ class OpenPHWidget(QtWidgets.QWidget):
         self.signal.stateLigandLoaded.emit()
 
     def state_model_loaded(self):
+        self.main_widget.setCurrentIndex(1)
         self.pdbEnter.setEnabled(False)
         self.proteinButton.setEnabled(False)
         self.ligandButton.setEnabled(False)

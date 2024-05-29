@@ -55,16 +55,13 @@ class PharmacophoreModel:
         Args:
             ligand_pbmol: pybel.Molecule
             atom_positions: list[NDArray[np.float32]] | NDArray[np.float32] | None
-            conformer_axis: Optional[int]
-            weights: Optional[dict[str, float]]
-
-            case: atom_positions: NDArray[np.float32]
-                i) conformer_axis is 0 or None
-                    atom_positions: (N_conformers, N_atoms, 3)
-                ii) conformer_axis is 1
-                    atom_positions: (N_atoms, N_conformers, 3)
-            case: atom_positions: None
-                Using RDKit Conformer informations
+            conformer_axis: int | None
+            weights: dict[str, float] | None
+            scoring_rule: str - {'max', 'average'}
+            i) conformer_axis is 0 or None
+                atom_positions: (N_conformers, N_atoms, 3)
+            ii) conformer_axis is 1
+                atom_positions: (N_atoms, N_conformers, 3)
         """
         ligand = Ligand(ligand_pbmol, atom_positions, conformer_axis)
         return self._scoring(ligand, weights)
@@ -74,12 +71,15 @@ class PharmacophoreModel:
         ligand_file: os.PathLike,
         weights: dict[str, float] | None = None,
     ) -> float:
-        return self._scoring(Ligand.load_from_file(ligand_file), weights)
+        ligand = Ligand.load_from_file(ligand_file)
+        return self._scoring(ligand, weights)
 
     def _scoring(
-        self, ligand: Ligand, weights: dict[str, float] | None = None
+        self,
+        ligand: Ligand,
+        weights: dict[str, float] | None = None,
     ) -> float:
-        return GraphMatcher(self, ligand, weights).scoring()
+        return GraphMatcher(self, ligand, weights).run()
 
     @classmethod
     def create(

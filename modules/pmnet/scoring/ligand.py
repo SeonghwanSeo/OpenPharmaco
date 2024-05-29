@@ -11,10 +11,6 @@ from numpy.typing import NDArray
 from .ligand_utils import get_pharmacophore_nodes, PharmacophoreNode
 
 
-def order(a, b):
-    return min(a, b), max(a, b)
-
-
 class Ligand:
     def __init__(
         self,
@@ -69,7 +65,7 @@ class Ligand:
         self.graph = LigandGraph(self)
 
     @classmethod
-    def load_from_file(cls, filename: os.PathLike) -> Ligand:
+    def load_from_file(cls, filename: os.PathLike[str]) -> Ligand:
         assert filename is not None
         extension = os.path.splitext(filename)[1]
         assert extension in [".sdf", ".pdb", ".mol2"]
@@ -85,6 +81,29 @@ class Ligand:
             assert len(pbmol.atoms) == num_atoms
             atom_positions.append([atom.coords for atom in pbmol.atoms])
         return cls(base_pbmol, atom_positions, _unsafe=True)
+
+    @classmethod
+    def load_from_smiles(cls, smiles: str, num_conformers: int) -> Ligand:
+        import tempfile
+        from rdkit import Chem
+        from rdkit.Chem import rdDistGeom
+
+        fn = tempfile.NamedTemporaryFile(suffix=".sdf").name
+        try:
+            rdmol: Chem.rdchem.Mol = Chem.MolFromSmiles(smiles)
+            rdmol = Chem.AddHs(rdmol)
+            rdDistGeom.EmbedMultipleConfs(
+                rdmol, num_conformers, param=rdDistGeom.srETKDGv3()
+            )
+            with Chem.SDWriter(fn) as w:
+                for i in range(rdmol.GetNumConformers()):
+                    w.write(rdmol, confId=i)
+            out = cls.load_from_file(fn)
+            os.unlink(fn)
+        except Exception as e:
+            os.unlink(fn)
+            raise e
+        return out
 
 
 class LigandGraph:
