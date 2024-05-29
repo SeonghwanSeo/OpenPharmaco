@@ -9,8 +9,19 @@ class OpenPHWindow(QtWidgets.QMainWindow):
         self.setWindowTitle("OpenPharmaco")
         self.setWindowIcon(QtGui.QIcon(str(IMAGE_DIR / "favicon.ico")))
         self.setStyleSheet(DARKMODE_STYLESHEET)
+        self.setMinimumSize(960, 720)
+        self.center()
         self.menuBar()
         self._filename = filename
+
+    def center(self):
+        screen = QtWidgets.QApplication.desktop().screenNumber(
+            QtWidgets.QApplication.desktop().cursor().pos()
+        )
+        center_point = QtWidgets.QApplication.desktop().screenGeometry(screen).center()
+        qr = self.frameGeometry()
+        qr.moveCenter(center_point)
+        self.move(qr.topLeft())
 
     def show(self):
         # Loading image
@@ -40,14 +51,12 @@ class OpenPHWindow(QtWidgets.QMainWindow):
     def setup_widget(self):
         from openph_gui.main_widget import OpenPHWidget
 
-        center = self.geometry().center()
         self.main_widget = OpenPHWidget(self)
         self.main_widget.setMinimumSize(960, 720)
         self.setCentralWidget(self.main_widget)
-        self.setMinimumSize(960, 720)
-        rect = self.geometry()
-        rect.moveCenter(center)
-        self.move(rect.topLeft())
+        # rect = self.geometry()
+        # rect.moveCenter(center)
+        # self.move(rect.topLeft())
 
         self.main_widget.signal.stateInitial.connect(self.state_initial)
         self.main_widget.signal.stateProteinLoaded.connect(self.state_protein_loaded)

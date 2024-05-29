@@ -35,16 +35,16 @@ except Exception:
 DEFAULT_FOCUS_THRESHOLD = 0.5
 DEFAULT_BOX_THRESHOLD = 0.5
 DEFAULT_SCORE_THRESHOLD = {
-    "PiStacking_P": 0.6,  # Top 40%
-    "PiStacking_T": 0.6,
-    "SaltBridge_lneg": 0.6,
-    "SaltBridge_pneg": 0.6,
-    "PiCation_lring": 0.6,
-    "PiCation_pring": 0.6,
-    "XBond": 0.8,  # Top 20%
-    "HBond_ldon": 0.8,
-    "HBond_pdon": 0.8,
-    "Hydrophobic": 0.8,
+    "PiStacking_P": 0.7,  # Top 40%
+    "PiStacking_T": 0.7,
+    "SaltBridge_lneg": 0.7,
+    "SaltBridge_pneg": 0.7,
+    "PiCation_lring": 0.7,
+    "PiCation_pring": 0.7,
+    "XBond": 0.85,  # Top 20%
+    "HBond_ldon": 0.85,
+    "HBond_pdon": 0.85,
+    "Hydrophobic": 0.85,
 }
 
 
@@ -102,9 +102,11 @@ class PharmacoNet:
         center = np.mean(
             [atom.coords for atom in ref_ligand.atoms], axis=0, dtype=np.float32
         )
-        pdbblock, protein_image, non_protein_area, token_positions, tokens = (
-            self.__parse_protein(protein_pdb_path, center)
+        protein_image, non_protein_area, token_positions, tokens = self.__parse_protein(
+            protein_pdb_path, center
         )
+        with open(protein_pdb_path) as f:
+            pdbblock: str = "\n".join(f.readlines())
 
         density_maps = self.__create_density_maps_gui(
             torch.from_numpy(protein_image),
@@ -130,7 +132,7 @@ class PharmacoNet:
         self,
         protein_pdb_path: str,
         center: NDArray[np.float32],
-    ) -> tuple[str, NDArray, NDArray | None, NDArray, NDArray]:
+    ) -> tuple[NDArray, NDArray | None, NDArray, NDArray]:
 
         self.logger.debug("Extract Pocket...")
         with tempfile.TemporaryDirectory() as dirname:
@@ -180,7 +182,7 @@ class PharmacoNet:
             non_protein_area = None
         self.logger.debug("MolVoxel:Voxelize Pocket Finish")
 
-        return pdbblock, protein_image, non_protein_area, token_positions, tokens
+        return protein_image, non_protein_area, token_positions, tokens
 
     def __create_density_maps_gui(
         self,

@@ -17,8 +17,6 @@ class NCIGroupItem(ToggleItem):
         for node in model.nodes:
             if SETTING.INTERACTION_TYPE_DICT[node.interaction_type] == name:
                 self.item_list.append(ModelNodeItem(self, node))
-        print(self.key)
-        print([item.key for item in self.item_list])
         molviewer.common.group(self.key, [item.key for item in self.item_list])
         self.enable()
 

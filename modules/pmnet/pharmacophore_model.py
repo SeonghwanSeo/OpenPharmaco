@@ -49,7 +49,6 @@ class PharmacophoreModel:
         atom_positions: list[NDArray[np.float32]] | NDArray[np.float32],
         conformer_axis: int | None = None,
         weights: dict[str, float] | None = None,
-        scoring_rule: str = "max",
     ) -> float:
         """Scoring Function
 
@@ -65,24 +64,22 @@ class PharmacophoreModel:
                 atom_positions: (N_atoms, N_conformers, 3)
         """
         ligand = Ligand(ligand_pbmol, atom_positions, conformer_axis)
-        return self._scoring(ligand, weights, scoring_rule)
+        return self._scoring(ligand, weights)
 
     def scoring_file(
         self,
         ligand_file: os.PathLike,
         weights: dict[str, float] | None = None,
-        scoring_rule: str = "max",
     ) -> float:
         ligand = Ligand.load_from_file(ligand_file)
-        return self._scoring(ligand, weights, scoring_rule)
+        return self._scoring(ligand, weights)
 
     def _scoring(
         self,
         ligand: Ligand,
         weights: dict[str, float] | None = None,
-        scoring_rule: str = "max",
     ) -> float:
-        return GraphMatcher(self, ligand, weights, scoring_rule).run()
+        return GraphMatcher(self, ligand, weights).run()
 
     @classmethod
     def create(

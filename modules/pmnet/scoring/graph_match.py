@@ -30,8 +30,8 @@ if TYPE_CHECKING:
 
 # NOTE: Parameters
 DEFAULT_WEIGHTS: dict[str, float] = dict(
-    Cation=4,
-    Anion=4,
+    Cation=8,
+    Anion=8,
     Aromatic=4,
     HBond_donor=4,
     HBond_acceptor=4,
@@ -66,11 +66,7 @@ class GraphMatcher:
         model: PharmacophoreModel,
         ligand: Ligand,
         weights: dict[str, float] | None = None,
-        scoring_rule: str = "max",
     ):
-        assert scoring_rule in ("average", "max")
-        self.scoring_rule: str = scoring_rule
-
         self.model_graph: PharmacophoreModel = model
         self.ligand_graph: LigandGraph = ligand.graph
         self.num_atoms = ligand.num_atoms
@@ -104,14 +100,11 @@ class GraphMatcher:
         if len(self.ligand_cluster_list) == 0:
             return 0
         root_tree = self.run_tree()
-        if self.scoring_rule.startswith("max"):
-            return max(leaf.max_score for leaf in root_tree.iteration())
-        else:
-            scores = [0] * self.num_conformers
-            for leaf in root_tree.iteration():
-                for conformer_id, _score in leaf.pair_scores.items():
-                    scores[conformer_id] = max(_score, scores[conformer_id])
-            return sum(scores) / self.num_conformers
+        scores = [0] * self.num_conformers
+        for leaf in root_tree.iteration():
+            for conformer_id, _score in leaf.pair_scores.items():
+                scores[conformer_id] = max(_score, scores[conformer_id])
+        return sum(scores) / self.num_conformers
 
     def run_tree(self) -> ClusterMatchTreeRoot:
         root_tree = ClusterMatchTreeRoot(
