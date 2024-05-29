@@ -4,7 +4,7 @@ IMAGE_DIR = Path(__file__).parent / "images"
 
 LIGAND_COLOR = "green"
 PROTEIN_COLOR = "gray90"
-PROTEIN_HIGHLIGHT_COLOR = "purple"
+PROTEIN_HIGHLIGHT_COLOR = "green"
 RESIDUE_HIGHLIGHT_COLOR = "black"
 
 PHARMACOPHORE_POINT_COLOR_DICT = {

@@ -206,7 +206,11 @@ def setup_ligand(self, name, filename, is_active=False):
 def setup_model(self, filename):
     from pmnet import PharmacophoreModel
 
-    self.pharmacophore_model = PharmacophoreModel.load(filename)
+    try:
+        self.pharmacophore_model = PharmacophoreModel.load(filename)
+    except Exception:
+        print(f"Fail to load {filename}")
+        return
     self.print_log(f"Load Pharmacophore Model ({filename})")
     with tempfile.TemporaryDirectory() as direc:
         protein_path = f"{direc}/{Path(filename).stem}.pdb"
@@ -251,7 +255,10 @@ def parse_pdb(self, pdb_code: str, protein_path, save_pdb_dir):
             for residue in chain:
                 hetflag, resseq, _ = residue.get_id()
                 if hetflag not in (" ", "W"):
-                    ligand_key = f"{pdb_code}_{chain.id}_{residue.get_resname()}"
+                    if chain.id.strip():
+                        ligand_key = f"{pdb_code}_{chain.id}_{residue.get_resname()}"
+                    else:
+                        ligand_key = f"{pdb_code}_{residue.get_resname()}"
                     ligand_selector = LigandSelect(residue)
                     ligand_path = os.path.join(
                         save_pdb_dir,
