@@ -2,12 +2,11 @@
 
  <img src="images/logo.png" alt="OpenPharmaco Logo" height="160">
 
-Open-Source software for ***Fully-automated Protein-based Pharmacophore Modeling*** for the ultra-large-scale virtual screening.
+Open-Source software for Fully-automated Protein-based Pharmacophore Modeling and High-throughput Virtual Screening.
 
 OpenPharmaco is currently powered by ***PharmacoNet: Accelerating Large-Scale Virtual Screening by Deep Pharmacophore Modeling***, developed by Seonghwan Seo, KAIST.
 
-If you are terminal user or developer (ex. Deep learning researcher), please visit PharmacoNet Project [[github](https://github.com/SeonghwanSeo/PharmacoNet)].
-It provides more functionality.
+If you are deep learning researcher, please visit PharmacoNet [[github](https://github.com/SeonghwanSeo/PharmacoNet)]. It provides more functions.
 
 If you have any problems or need help, please add an github issue.
 
