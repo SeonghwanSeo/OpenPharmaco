@@ -1,10 +1,10 @@
 # OpenPharmaco: Open-source Protein-based Pharmacophore Modeling Software
 
- <img src="images/logo.png" alt="OpenPharmaco Logo" height="160">
+<img src="images/overview.png" alt="OpenPharmaco Logo" height="300">
 
 Open-Source software for Fully-automated Protein-based Pharmacophore Modeling and High-throughput Virtual Screening.
 
-OpenPharmaco is currently powered by ***PharmacoNet: Accelerating Large-Scale Virtual Screening by Deep Pharmacophore Modeling***, developed by Seonghwan Seo, KAIST.
+OpenPharmaco is currently powered by **_PharmacoNet: deep learning-guided pharmacophore modeling for ultra-large-scale virtual screening_**, developed by Seonghwan Seo, KAIST.
 
 If you are deep learning researcher, please visit PharmacoNet [[github](https://github.com/SeonghwanSeo/PharmacoNet)]. It provides more functions.
 
@@ -13,8 +13,6 @@ If you have any problems or need help, please add an github issue.
 You can get more information at [Wiki](https://github.com/SeonghwanSeo/OpenPharmaco/wiki).
 
 \* Tested on Microsoft Window and Mac OS X (Apple Silicon).
-
-
 
 ## Quick Start
 
@@ -33,23 +31,19 @@ conda activate openph
 openph # or openpharmaco
 ```
 
-
-
 ## Citation
 
-Paper on [arxiv](https://arxiv.org/abs/2310.00681)
+Paper on [Chemical Science](https://doi.org/10.1039/D4SC04854G), [arXiv](https://arxiv.org/abs/2310.00681).
 
-```
-@article{seo2023pharmaconet,
-  title = {PharmacoNet: Accelerating Large-Scale Virtual Screening by Deep Pharmacophore Modeling},
-  author = {Seo, Seonghwan and Kim, Woo Youn},
-  journal = {arXiv preprint arXiv:2310.00681},
-  year = {2023},
-  url = {https://arxiv.org/abs/2310.00681},
+```bibtex
+@article{seo2024pharmaconet,
+  title={PharmacoNet: deep learning-guided pharmacophore modeling for ultra-large-scale virtual screening},
+  author={Seo, Seonghwan and Kim, Woo Youn},
+  journal={Chemical Science},
+  year={2024},
+  publisher={Royal Society of Chemistry}
 }
 ```
-
-
 
 ## Future Plan
 
@@ -61,8 +55,6 @@ Paper on [arxiv](https://arxiv.org/abs/2310.00681)
   - Pharmacophore Customizing
 - Version 3
   - Binding Pose Prediction
-
-
 
 ## Reference
 
