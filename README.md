@@ -1,6 +1,6 @@
 # OpenPharmaco: Open-source Protein-based Pharmacophore Modeling Software
 
-<img src="images/overview.png" alt="OpenPharmaco Logo" height="300">
+<img src="images/example_image.png" alt="OpenPharmaco Logo" height="500">
 
 Open-Source software for Fully-automated Protein-based Pharmacophore Modeling and High-throughput Virtual Screening.
 
